@@ -3,13 +3,13 @@ import { Stage } from "@/components/Stage";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/game/store";
 
-export const Route = createFileRoute("/zwyciezca")({
+export const Route = createFileRoute("/winner")({
   head: () => ({
     meta: [
-      { title: "Zwycięzca gry — Podłoga" },
-      { name: "description", content: "Finałowy ekran ze zwycięzcą całej rozgrywki." },
-      { property: "og:title", content: "Zwycięzca gry — Podłoga" },
-      { property: "og:description", content: "Finałowy ekran ze zwycięzcą gry Podłoga." },
+      { title: "Final Winner — The Floor Party Game" },
+      { name: "description", content: "The final screen crowning the winner of the whole game." },
+      { property: "og:title", content: "Final Winner — The Floor Party Game" },
+      { property: "og:description", content: "Crown the champion of your photo duel party game." },
     ],
   }),
   component: WinnerPage,
@@ -22,7 +22,7 @@ function WinnerPage() {
 
   return (
     <Stage
-      title="Zwycięzca"
+      title="Final Winner"
       actions={
         <Button
           size="lg"
@@ -31,14 +31,14 @@ function WinnerPage() {
             navigate({ to: "/" });
           }}
         >
-          Nowa gra
+          New game
         </Button>
       }
     >
       <div className="panel gold-frame mx-auto max-w-3xl p-16 text-center">
-        <p className="font-display tracking-[0.4em] text-muted-foreground">MISTRZ PODŁOGI</p>
+        <p className="font-display tracking-[0.4em] text-muted-foreground">CHAMPION</p>
         <p className="text-gold-shine mt-6 text-6xl font-bold">
-          {winner?.name ?? "Jeszcze nie wyłoniony"}
+          {winner?.name ?? "Not decided yet"}
         </p>
       </div>
     </Stage>

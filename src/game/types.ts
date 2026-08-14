@@ -8,41 +8,38 @@ export interface Player {
 
 export interface Question {
   id: string;
-  /** URL zdjęcia (uzupełniane w kolejnych krokach) */
+  /** Photo URL or data URL */
   photoUrl: string;
-  /** Poprawna odpowiedź */
+  /** Correct answer for this photo */
   answer: string;
 }
 
 export interface Category {
   id: string;
   name: string;
-  /** Jedna podpowiedź do kategorii */
+  /** One fixed hint for the whole category */
   hint: string;
-  /** Uporządkowana lista pytań ze zdjęciami */
+  /** Ordered list of photo questions */
   questions: Question[];
 }
 
 export interface Duel {
-  /** Gracz wyzywający */
   challengerId: string;
-  /** Gracz broniący się */
   defenderId: string;
   categoryId: string;
-  /** Zwycięzca pojedynku (po rozstrzygnięciu) */
   winnerId: string | null;
 }
 
 export interface GameState {
   phase: GamePhase;
   players: Player[];
+  /** Shared category pool — categories are never owned by players */
   categories: Category[];
-  /** Pytania zużyte w tej rozgrywce (id pytań) */
+  /** Questions already used in the current game */
   consumedQuestionIds: string[];
   currentDuel: Duel | null;
-  /** Gracz aktualnie odpowiadający */
   activePlayerId: string | null;
-  /** Pozostały czas graczy w bieżącym pojedynku (sekundy) */
+  /** Remaining seconds per player in the current duel */
   timers: Record<string, number>;
   winnerId: string | null;
 }
