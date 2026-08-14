@@ -111,7 +111,7 @@ export function reducer(state: GameState, action: Action): GameState {
         const target = index + action.direction;
         if (index === -1 || target < 0 || target >= c.questions.length) return c;
         const questions = [...c.questions];
-        const [moved] = questions.splice(index, 1);
+        const moved = questions.splice(index, 1)[0]!;
         questions.splice(target, 0, moved);
         return { ...c, questions };
       });
