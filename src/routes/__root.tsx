@@ -78,15 +78,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Podłoga — imprezowa gra na projektor" },
+      { title: "The Floor — Local Party Game" },
       {
         name: "description",
-        content: "Lokalna gra imprezowa inspirowana teleturniejem: gracze, kategorie i pojedynki.",
+        content: "A local browser party game: players, a shared category pool and photo duels.",
       },
-      { property: "og:title", content: "Podłoga — imprezowa gra na projektor" },
+      { property: "og:title", content: "The Floor — Local Party Game" },
       {
         property: "og:description",
-        content: "Lokalna gra imprezowa: gracze, kategorie i pojedynki na jednym ekranie.",
+        content: "A local browser party game played on one screen.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
