@@ -52,7 +52,7 @@ type Action =
   | { type: "addCategory" }
   | { type: "removeCategory"; id: string }
   | { type: "updateCategory"; id: string; changes: Partial<Omit<Category, "id" | "questions">> }
-  | { type: "addQuestion"; categoryId: string }
+  | { type: "addQuestions"; categoryId: string; questions: Question[] }
   | { type: "removeQuestion"; categoryId: string; questionId: string }
   | {
       type: "updateQuestion";
