@@ -3,8 +3,11 @@ import { Stage } from "@/components/Stage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useGame } from "@/game/store";
-import type { Category } from "@/game/types";
+import { createQuestion, newImageId, useGame } from "@/game/store";
+import { deleteImage, putImage, releaseImageUrl } from "@/game/imageStore";
+import { useImageUrl } from "@/game/useImageUrl";
+import type { Category, Question } from "@/game/types";
+import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
