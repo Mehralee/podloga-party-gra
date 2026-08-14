@@ -91,10 +91,10 @@ export function reducer(state: GameState, action: Action): GameState {
       return { ...state, categories: state.categories.filter((c) => c.id !== action.id) };
     case "updateCategory":
       return mapCategory(state, action.id, (c) => ({ ...c, ...action.changes }));
-    case "addQuestion":
+    case "addQuestions":
       return mapCategory(state, action.categoryId, (c) => ({
         ...c,
-        questions: [...c.questions, createQuestion()],
+        questions: [...c.questions, ...action.questions],
       }));
     case "removeQuestion":
       return mapCategory(state, action.categoryId, (c) => ({
