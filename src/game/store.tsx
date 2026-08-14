@@ -19,9 +19,10 @@ export const createPlayer = (name = ""): Player => ({
   eliminated: false,
 });
 
-export const createQuestion = (): Question => ({
+export const createQuestion = (imageId: string, fileName?: string): Question => ({
   id: createId(),
-  photoUrl: "",
+  imageId,
+  fileName,
   answer: "",
 });
 
@@ -29,8 +30,10 @@ export const createCategory = (name = ""): Category => ({
   id: createId(),
   name,
   hint: "",
-  questions: [createQuestion()],
+  questions: [],
 });
+
+export const newImageId = () => `img_${createId()}${createId()}`;
 
 const initialState: GameState = {
   phase: "setup",
@@ -49,7 +52,7 @@ type Action =
   | { type: "addCategory" }
   | { type: "removeCategory"; id: string }
   | { type: "updateCategory"; id: string; changes: Partial<Omit<Category, "id" | "questions">> }
-  | { type: "addQuestion"; categoryId: string }
+  | { type: "addQuestions"; categoryId: string; questions: Question[] }
   | { type: "removeQuestion"; categoryId: string; questionId: string }
   | {
       type: "updateQuestion";
@@ -88,10 +91,10 @@ export function reducer(state: GameState, action: Action): GameState {
       return { ...state, categories: state.categories.filter((c) => c.id !== action.id) };
     case "updateCategory":
       return mapCategory(state, action.id, (c) => ({ ...c, ...action.changes }));
-    case "addQuestion":
+    case "addQuestions":
       return mapCategory(state, action.categoryId, (c) => ({
         ...c,
-        questions: [...c.questions, createQuestion()],
+        questions: [...c.questions, ...action.questions],
       }));
     case "removeQuestion":
       return mapCategory(state, action.categoryId, (c) => ({

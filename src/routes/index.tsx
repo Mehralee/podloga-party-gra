@@ -3,8 +3,11 @@ import { Stage } from "@/components/Stage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useGame } from "@/game/store";
-import type { Category } from "@/game/types";
+import { createQuestion, newImageId, useGame } from "@/game/store";
+import { deleteImage, putImage, releaseImageUrl } from "@/game/imageStore";
+import { useImageUrl } from "@/game/useImageUrl";
+import type { Category, Question } from "@/game/types";
+import { useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -183,91 +186,155 @@ function CategoryEditor({ category, index }: { category: Category; index: number
         </Button>
       </div>
 
-      <div className="mt-4 space-y-2 pl-0 sm:pl-8">
+      <QuestionsEditor category={category} />
+    </li>
+  );
+}
+
+function QuestionsEditor({ category }: { category: Category }) {
+  const { dispatch } = useGame();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFiles(fileList: FileList | null) {
+    const files = Array.from(fileList ?? []).filter((f) => f.type.startsWith("image/"));
+    if (files.length === 0) return;
+    setUploading(true);
+    try {
+      const questions: Question[] = [];
+      for (const file of files) {
+        const imageId = newImageId();
+        await putImage(imageId, file);
+        questions.push(createQuestion(imageId, file.name));
+      }
+      dispatch({ type: "addQuestions", categoryId: category.id, questions });
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="mt-4 space-y-3 pl-0 sm:pl-8">
+      <div className="flex flex-wrap items-center gap-3">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">
           Photo questions ({category.questions.length})
         </p>
-        {category.questions.map((question, qIndex) => (
-          <div key={question.id} className="flex items-center gap-2">
-            <span className="w-6 text-sm text-muted-foreground">{qIndex + 1}</span>
-            <Input
-              className="flex-1"
-              value={question.photoUrl}
-              placeholder="Photo URL"
-              onChange={(e) =>
-                dispatch({
-                  type: "updateQuestion",
-                  categoryId: category.id,
-                  questionId: question.id,
-                  changes: { photoUrl: e.target.value },
-                })
-              }
-            />
-            <Input
-              className="flex-1"
-              value={question.answer}
-              placeholder="Correct answer"
-              onChange={(e) =>
-                dispatch({
-                  type: "updateQuestion",
-                  categoryId: category.id,
-                  questionId: question.id,
-                  changes: { answer: e.target.value },
-                })
-              }
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Move question up"
-              onClick={() =>
-                dispatch({
-                  type: "moveQuestion",
-                  categoryId: category.id,
-                  questionId: question.id,
-                  direction: -1,
-                })
-              }
-            >
-              ↑
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Move question down"
-              onClick={() =>
-                dispatch({
-                  type: "moveQuestion",
-                  categoryId: category.id,
-                  questionId: question.id,
-                  direction: 1,
-                })
-              }
-            >
-              ↓
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Delete question"
-              onClick={() =>
-                dispatch({
-                  type: "removeQuestion",
-                  categoryId: category.id,
-                  questionId: question.id,
-                })
-              }
-            >
-              ✕
-            </Button>
-          </div>
-        ))}
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => void handleFiles(e.target.files)}
+        />
         <Button
           variant="secondary"
           size="sm"
-          onClick={() => dispatch({ type: "addQuestion", categoryId: category.id })}
+          disabled={uploading}
+          onClick={() => inputRef.current?.click()}
         >
-          Add photo question
+          {uploading ? "Uploading…" : "Upload images"}
+        </Button>
+      </div>
+
+      {category.questions.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          No photos yet — upload one or more images to create questions.
+        </p>
+      ) : (
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {category.questions.map((question, qIndex) => (
+            <QuestionCard
+              key={question.id}
+              categoryId={category.id}
+              question={question}
+              index={qIndex}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function QuestionCard({
+  categoryId,
+  question,
+  index,
+}: {
+  categoryId: string;
+  question: Question;
+  index: number;
+}) {
+  const { dispatch } = useGame();
+  const url = useImageUrl(question.imageId);
+
+  return (
+    <li className="rounded-lg border border-border bg-background/40 p-3">
+      <div className="relative aspect-video overflow-hidden rounded-md bg-secondary">
+        {url ? (
+          <img
+            src={url}
+            alt={question.answer || question.fileName || `Photo question ${index + 1}`}
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+            Image missing
+          </div>
+        )}
+        <span className="font-display absolute left-2 top-2 rounded bg-background/80 px-2 text-sm text-primary">
+          {index + 1}
+        </span>
+      </div>
+      <Input
+        className="mt-2"
+        value={question.answer}
+        placeholder="Correct answer"
+        onChange={(e) =>
+          dispatch({
+            type: "updateQuestion",
+            categoryId,
+            questionId: question.id,
+            changes: { answer: e.target.value },
+          })
+        }
+      />
+      <div className="mt-2 flex items-center justify-between">
+        <div className="flex gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Move question up"
+            onClick={() =>
+              dispatch({ type: "moveQuestion", categoryId, questionId: question.id, direction: -1 })
+            }
+          >
+            ↑
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Move question down"
+            onClick={() =>
+              dispatch({ type: "moveQuestion", categoryId, questionId: question.id, direction: 1 })
+            }
+          >
+            ↓
+          </Button>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            dispatch({ type: "removeQuestion", categoryId, questionId: question.id });
+            releaseImageUrl(question.imageId);
+            void deleteImage(question.imageId);
+          }}
+        >
+          Delete
         </Button>
       </div>
     </li>

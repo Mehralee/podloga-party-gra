@@ -8,8 +8,10 @@ export interface Player {
 
 export interface Question {
   id: string;
-  /** Photo URL or data URL */
-  photoUrl: string;
+  /** Key of the image blob stored locally in IndexedDB */
+  imageId: string;
+  /** Original file name, shown as a fallback label */
+  fileName?: string | undefined;
   /** Correct answer for this photo */
   answer: string;
 }
