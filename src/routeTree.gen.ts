@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GraRouteImport } from './routes/gra'
+import { Route as PojedynekRouteImport } from './routes/pojedynek'
+import { Route as ZwyciezcaRouteImport } from './routes/zwyciezca'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraRoute = GraRouteImport.update({
+  id: '/gra',
+  path: '/gra',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PojedynekRoute = PojedynekRouteImport.update({
+  id: '/pojedynek',
+  path: '/pojedynek',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ZwyciezcaRoute = ZwyciezcaRouteImport.update({
+  id: '/zwyciezca',
+  path: '/zwyciezca',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/gra': typeof GraRoute
+  '/pojedynek': typeof PojedynekRoute
+  '/zwyciezca': typeof ZwyciezcaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/gra': typeof GraRoute
+  '/pojedynek': typeof PojedynekRoute
+  '/zwyciezca': typeof ZwyciezcaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/gra': typeof GraRoute
+  '/pojedynek': typeof PojedynekRoute
+  '/zwyciezca': typeof ZwyciezcaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/gra' | '/pojedynek' | '/zwyciezca'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/gra' | '/pojedynek' | '/zwyciezca'
+  id: '__root__' | '/' | '/gra' | '/pojedynek' | '/zwyciezca'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GraRoute: typeof GraRoute
+  PojedynekRoute: typeof PojedynekRoute
+  ZwyciezcaRoute: typeof ZwyciezcaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gra': {
+      id: '/gra'
+      path: '/gra'
+      fullPath: '/gra'
+      preLoaderRoute: typeof GraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pojedynek': {
+      id: '/pojedynek'
+      path: '/pojedynek'
+      fullPath: '/pojedynek'
+      preLoaderRoute: typeof PojedynekRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/zwyciezca': {
+      id: '/zwyciezca'
+      path: '/zwyciezca'
+      fullPath: '/zwyciezca'
+      preLoaderRoute: typeof ZwyciezcaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GraRoute: GraRoute,
+  PojedynekRoute: PojedynekRoute,
+  ZwyciezcaRoute: ZwyciezcaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

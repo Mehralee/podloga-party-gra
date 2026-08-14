@@ -19,6 +19,10 @@
  */
 
 @theme inline {
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -62,39 +66,52 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --radius: 0.75rem;
+  --background: oklch(0.19 0.09 262);
+  --foreground: oklch(0.97 0.01 250);
+  --card: oklch(0.25 0.1 262);
+  --card-foreground: oklch(0.97 0.01 250);
+  --popover: oklch(0.25 0.1 262);
+  --popover-foreground: oklch(0.97 0.01 250);
+  --primary: oklch(0.82 0.14 88);
+  --primary-foreground: oklch(0.21 0.09 262);
+  --secondary: oklch(0.33 0.11 262);
+  --secondary-foreground: oklch(0.97 0.01 250);
+  --muted: oklch(0.3 0.09 262);
+  --muted-foreground: oklch(0.78 0.05 255);
+  --accent: oklch(0.55 0.19 258);
+  --accent-foreground: oklch(0.98 0.01 250);
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: oklch(0.98 0.01 250);
+  --border: oklch(0.42 0.11 262);
+  --input: oklch(0.32 0.09 262);
+  --ring: oklch(0.82 0.14 88);
+  --chart-1: oklch(0.82 0.14 88);
+  --chart-2: oklch(0.6 0.18 258);
+  --chart-3: oklch(0.7 0.12 220);
+  --chart-4: oklch(0.5 0.15 265);
+  --chart-5: oklch(0.9 0.09 95);
+  --sidebar: oklch(0.22 0.09 262);
+  --sidebar-foreground: oklch(0.97 0.01 250);
+  --sidebar-primary: oklch(0.82 0.14 88);
+  --sidebar-primary-foreground: oklch(0.21 0.09 262);
+  --sidebar-accent: oklch(0.33 0.11 262);
+  --sidebar-accent-foreground: oklch(0.97 0.01 250);
+  --sidebar-border: oklch(0.42 0.11 262);
+  --sidebar-ring: oklch(0.82 0.14 88);
+
+  --gold: oklch(0.82 0.14 88);
+  --gold-bright: oklch(0.93 0.11 95);
+  --gradient-gold: linear-gradient(180deg, oklch(0.93 0.11 95), oklch(0.74 0.14 78));
+  --gradient-stage: radial-gradient(
+      circle at 50% 20%,
+      oklch(0.42 0.16 258 / 0.55),
+      transparent 60%
+    ),
+    linear-gradient(180deg, oklch(0.21 0.1 262), oklch(0.15 0.07 264));
+  --shadow-panel: 0 20px 50px -20px oklch(0 0 0 / 0.7);
+  --font-display: "Oswald", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, sans-serif;
 }
 
 .dark {
@@ -141,4 +158,40 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+}
+
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-image: var(--gradient-stage);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+}
+
+@utility text-gold-shine {
+  background: var(--gradient-gold);
+  background-clip: text;
+  color: transparent;
+}
+
+@utility panel {
+  background: linear-gradient(180deg, oklch(0.28 0.1 262), oklch(0.22 0.09 263));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+}
+
+@utility gold-frame {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 1px oklch(0.35 0.1 262) inset, 0 0 24px oklch(0.82 0.14 88 / 0.25);
 }
