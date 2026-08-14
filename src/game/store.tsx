@@ -19,9 +19,10 @@ export const createPlayer = (name = ""): Player => ({
   eliminated: false,
 });
 
-export const createQuestion = (): Question => ({
+export const createQuestion = (imageId: string, fileName?: string): Question => ({
   id: createId(),
-  photoUrl: "",
+  imageId,
+  fileName,
   answer: "",
 });
 
@@ -29,8 +30,10 @@ export const createCategory = (name = ""): Category => ({
   id: createId(),
   name,
   hint: "",
-  questions: [createQuestion()],
+  questions: [],
 });
+
+export const newImageId = () => `img_${createId()}${createId()}`;
 
 const initialState: GameState = {
   phase: "setup",
