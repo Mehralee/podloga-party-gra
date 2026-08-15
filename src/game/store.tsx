@@ -7,7 +7,15 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Category, GamePhase, GameState, Player, Question } from "./types";
+import {
+  DEFAULT_DUEL_TIME,
+  type Category,
+  type GamePhase,
+  type GameState,
+  type Player,
+  type Question,
+} from "./types";
+
 
 const STORAGE_KEY = "the-floor-setup-v1";
 
