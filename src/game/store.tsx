@@ -156,8 +156,15 @@ type Action =
   | { type: "moveQuestion"; categoryId: string; questionId: string; direction: -1 | 1 }
   | { type: "setPhase"; phase: GamePhase }
   | { type: "startGame" }
+  | { type: "nextDuel" }
+  | { type: "reveal" }
+  | { type: "correct" }
+  | { type: "pass" }
+  | { type: "togglePause" }
+  | { type: "tick"; seconds: number }
   | { type: "resetGame" }
   | { type: "hydrate"; state: GameState };
+
 
 function mapCategory(state: GameState, id: string, fn: (c: Category) => Category): GameState {
   return { ...state, categories: state.categories.map((c) => (c.id === id ? fn(c) : c)) };
