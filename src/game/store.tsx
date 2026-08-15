@@ -221,17 +221,54 @@ export function reducer(state: GameState, action: Action): GameState {
     case "setPhase":
       return { ...state, phase: action.phase };
     case "startGame":
-      return {
+      return beginDuel({
         ...state,
-        phase: "playing",
         consumedQuestionIds: [],
         currentDuel: null,
         winnerId: null,
-        activePlayerId: state.players[0]?.id ?? null,
+        players: state.players.map((p) => ({ ...p, eliminated: false })),
+      });
+    case "nextDuel":
+      return beginDuel(state);
+    case "reveal":
+      return { ...state, revealed: true };
+    case "correct": {
+      const duel = state.currentDuel;
+      if (!duel || !state.activePlayerId) return state;
+      const other =
+        state.activePlayerId === duel.challengerId ? duel.defenderId : duel.challengerId;
+      const advanced = advanceQuestion({ ...state, revealed: true });
+      if (advanced.phase !== "playing") return advanced;
+      return { ...advanced, activePlayerId: other };
+    }
+    case "pass":
+      return state.currentDuel ? advanceQuestion(state) : state;
+    case "togglePause":
+      return { ...state, paused: !state.paused };
+    case "tick": {
+      const id = state.activePlayerId;
+      if (!id || state.paused || state.phase !== "playing") return state;
+      const remaining = Math.max(0, (state.timers[id] ?? 0) - action.seconds);
+      const next = { ...state, timers: { ...state.timers, [id]: remaining } };
+      if (remaining > 0) return next;
+      const duel = state.currentDuel!;
+      const other = id === duel.challengerId ? duel.defenderId : duel.challengerId;
+      return endDuel(next, other);
+    }
+    case "resetGame":
+      return {
+        ...state,
+        phase: "setup",
+        winnerId: null,
+        currentDuel: null,
+        timers: {},
+        consumedQuestionIds: [],
+        activePlayerId: null,
+        revealed: false,
+        paused: false,
         players: state.players.map((p) => ({ ...p, eliminated: false })),
       };
-    case "resetGame":
-      return { ...state, phase: "setup", winnerId: null, currentDuel: null, timers: {} };
+
     default:
       return state;
   }
