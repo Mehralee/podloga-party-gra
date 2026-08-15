@@ -16,22 +16,43 @@ export const Route = createFileRoute("/duel")({
 });
 
 function DuelResultPage() {
-  const { state } = useGame();
+  const { state, dispatch, survivingPlayers } = useGame();
   const navigate = useNavigate();
   const duel = state.currentDuel;
   const nameOf = (id?: string | null) => state.players.find((p) => p.id === id)?.name ?? "—";
+  const gameOver = survivingPlayers.length <= 1;
 
   return (
     <Stage
       title="Duel Result"
       subtitle="Summary of the head-to-head round."
       actions={
-        <>
-          <Button variant="secondary" onClick={() => navigate({ to: "/game" })}>
-            Back to board
+        gameOver ? (
+          <Button size="lg" onClick={() => navigate({ to: "/winner" })}>
+            Winner screen
           </Button>
-          <Button onClick={() => navigate({ to: "/winner" })}>Winner screen</Button>
-        </>
+        ) : (
+          <>
+            <Button
+              size="lg"
+              onClick={() => {
+                dispatch({ type: "nextDuel" });
+                navigate({ to: "/game" });
+              }}
+            >
+              Next duel
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                dispatch({ type: "resetGame" });
+                navigate({ to: "/" });
+              }}
+            >
+              Back to setup
+            </Button>
+          </>
+        )
       }
     >
       <div className="panel gold-frame mx-auto max-w-3xl p-10 text-center">
@@ -42,6 +63,12 @@ function DuelResultPage() {
             </p>
             <p className="text-gold-shine mt-6 text-4xl font-bold">
               Winner: {nameOf(duel.winnerId)}
+            </p>
+            <p className="mt-3 text-muted-foreground">
+              Eliminated: {nameOf(duel.loserId)} — ran out of time or lost the duel.
+            </p>
+            <p className="mt-6 text-sm text-muted-foreground">
+              Players still in the game: {survivingPlayers.length}
             </p>
           </>
         ) : (

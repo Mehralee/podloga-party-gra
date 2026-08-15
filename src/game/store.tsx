@@ -7,7 +7,15 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Category, GamePhase, GameState, Player, Question } from "./types";
+import {
+  DEFAULT_DUEL_TIME,
+  type Category,
+  type GamePhase,
+  type GameState,
+  type Player,
+  type Question,
+} from "./types";
+
 
 const STORAGE_KEY = "the-floor-setup-v1";
 
@@ -43,8 +51,93 @@ const initialState: GameState = {
   currentDuel: null,
   activePlayerId: null,
   timers: {},
+  revealed: false,
+  paused: false,
   winnerId: null,
 };
+
+const pick = <T,>(items: T[]): T | undefined =>
+  items.length ? items[Math.floor(Math.random() * items.length)] : undefined;
+
+/** Next unused question of a category, in stored order. */
+function nextQuestion(state: GameState, categoryId: string): Question | undefined {
+  const category = state.categories.find((c) => c.id === categoryId);
+  return category?.questions.find((q) => !state.consumedQuestionIds.includes(q.id));
+}
+
+/** Categories that still have at least one unused question. */
+function availableCategories(state: GameState): Category[] {
+  return state.categories.filter((c) => nextQuestion(state, c.id));
+}
+
+/** Starts a duel between two random survivors on a random available category. */
+function beginDuel(state: GameState): GameState {
+  const survivors = state.players.filter((p) => !p.eliminated);
+  if (survivors.length < 2) {
+    return {
+      ...state,
+      phase: "finished",
+      currentDuel: null,
+      winnerId: survivors[0]?.id ?? null,
+    };
+  }
+  const challenger = pick(survivors)!;
+  const defender = pick(survivors.filter((p) => p.id !== challenger.id))!;
+  const category = pick(availableCategories(state));
+  if (!category) return { ...state, phase: "finished", currentDuel: null };
+  const question = nextQuestion(state, category.id)!;
+
+  return {
+    ...state,
+    phase: "playing",
+    currentDuel: {
+      challengerId: challenger.id,
+      defenderId: defender.id,
+      categoryId: category.id,
+      questionId: question.id,
+      winnerId: null,
+      loserId: null,
+    },
+    consumedQuestionIds: [...state.consumedQuestionIds, question.id],
+    activePlayerId: challenger.id,
+    timers: { [challenger.id]: DEFAULT_DUEL_TIME, [defender.id]: DEFAULT_DUEL_TIME },
+    revealed: false,
+    paused: false,
+  };
+}
+
+/** Loads the next unused question of the current category, if any. */
+function advanceQuestion(state: GameState): GameState {
+  const duel = state.currentDuel;
+  if (!duel) return state;
+  const question = nextQuestion(state, duel.categoryId);
+  if (!question) return endDuel(state, state.activePlayerId!);
+  return {
+    ...state,
+    currentDuel: { ...duel, questionId: question.id },
+    consumedQuestionIds: [...state.consumedQuestionIds, question.id],
+    revealed: false,
+  };
+}
+
+/** Ends the duel: the given player wins, the other one is eliminated. */
+function endDuel(state: GameState, winnerId: string): GameState {
+  const duel = state.currentDuel;
+  if (!duel) return state;
+  const loserId = winnerId === duel.challengerId ? duel.defenderId : duel.challengerId;
+  const players = state.players.map((p) => (p.id === loserId ? { ...p, eliminated: true } : p));
+  const survivors = players.filter((p) => !p.eliminated);
+  return {
+    ...state,
+    players,
+    phase: "duel-result",
+    paused: false,
+    activePlayerId: null,
+    currentDuel: { ...duel, winnerId, loserId },
+    winnerId: survivors.length === 1 ? (survivors[0]?.id ?? null) : null,
+  };
+}
+
 
 type Action =
   | { type: "setPlayerCount"; count: number }
@@ -63,8 +156,15 @@ type Action =
   | { type: "moveQuestion"; categoryId: string; questionId: string; direction: -1 | 1 }
   | { type: "setPhase"; phase: GamePhase }
   | { type: "startGame" }
+  | { type: "nextDuel" }
+  | { type: "reveal" }
+  | { type: "correct" }
+  | { type: "pass" }
+  | { type: "togglePause" }
+  | { type: "tick"; seconds: number }
   | { type: "resetGame" }
   | { type: "hydrate"; state: GameState };
+
 
 function mapCategory(state: GameState, id: string, fn: (c: Category) => Category): GameState {
   return { ...state, categories: state.categories.map((c) => (c.id === id ? fn(c) : c)) };
@@ -121,17 +221,54 @@ export function reducer(state: GameState, action: Action): GameState {
     case "setPhase":
       return { ...state, phase: action.phase };
     case "startGame":
-      return {
+      return beginDuel({
         ...state,
-        phase: "playing",
         consumedQuestionIds: [],
         currentDuel: null,
         winnerId: null,
-        activePlayerId: state.players[0]?.id ?? null,
+        players: state.players.map((p) => ({ ...p, eliminated: false })),
+      });
+    case "nextDuel":
+      return beginDuel(state);
+    case "reveal":
+      return { ...state, revealed: true };
+    case "correct": {
+      const duel = state.currentDuel;
+      if (!duel || !state.activePlayerId) return state;
+      const other =
+        state.activePlayerId === duel.challengerId ? duel.defenderId : duel.challengerId;
+      const advanced = advanceQuestion({ ...state, revealed: true });
+      if (advanced.phase !== "playing") return advanced;
+      return { ...advanced, activePlayerId: other };
+    }
+    case "pass":
+      return state.currentDuel ? advanceQuestion(state) : state;
+    case "togglePause":
+      return { ...state, paused: !state.paused };
+    case "tick": {
+      const id = state.activePlayerId;
+      if (!id || state.paused || state.phase !== "playing") return state;
+      const remaining = Math.max(0, (state.timers[id] ?? 0) - action.seconds);
+      const next = { ...state, timers: { ...state.timers, [id]: remaining } };
+      if (remaining > 0) return next;
+      const duel = state.currentDuel!;
+      const other = id === duel.challengerId ? duel.defenderId : duel.challengerId;
+      return endDuel(next, other);
+    }
+    case "resetGame":
+      return {
+        ...state,
+        phase: "setup",
+        winnerId: null,
+        currentDuel: null,
+        timers: {},
+        consumedQuestionIds: [],
+        activePlayerId: null,
+        revealed: false,
+        paused: false,
         players: state.players.map((p) => ({ ...p, eliminated: false })),
       };
-    case "resetGame":
-      return { ...state, phase: "setup", winnerId: null, currentDuel: null, timers: {} };
+
     default:
       return state;
   }
