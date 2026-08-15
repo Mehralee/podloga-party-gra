@@ -29,7 +29,10 @@ export interface Duel {
   challengerId: string;
   defenderId: string;
   categoryId: string;
+  /** Question currently shown on the stage */
+  questionId: string | null;
   winnerId: string | null;
+  loserId: string | null;
 }
 
 export interface GameState {
@@ -43,7 +46,12 @@ export interface GameState {
   activePlayerId: string | null;
   /** Remaining seconds per player in the current duel */
   timers: Record<string, number>;
+  /** Correct answer visible on stage */
+  revealed: boolean;
+  /** Whole game paused (timers frozen) */
+  paused: boolean;
   winnerId: string | null;
 }
 
-export const DEFAULT_DUEL_TIME = 45;
+export const DEFAULT_DUEL_TIME = 40;
+
