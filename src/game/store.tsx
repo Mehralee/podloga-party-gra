@@ -120,23 +120,40 @@ function advanceQuestion(state: GameState): GameState {
   };
 }
 
-/** Ends the duel: the given player wins, the other one is eliminated. */
+/** Ends the duel: the given player wins. The loser is only marked as
+ *  eliminated later, when the host confirms it on the result screen. */
 function endDuel(state: GameState, winnerId: string): GameState {
   const duel = state.currentDuel;
   if (!duel) return state;
   const loserId = winnerId === duel.challengerId ? duel.defenderId : duel.challengerId;
-  const players = state.players.map((p) => (p.id === loserId ? { ...p, eliminated: true } : p));
-  const survivors = players.filter((p) => !p.eliminated);
   return {
     ...state,
-    players,
     phase: "duel-result",
     paused: false,
     activePlayerId: null,
     currentDuel: { ...duel, winnerId, loserId },
-    winnerId: survivors.length === 1 ? (survivors[0]?.id ?? null) : null,
   };
 }
+
+/** Host confirmed the elimination: remove the loser and continue the game. */
+function confirmElimination(state: GameState): GameState {
+  const loserId = state.currentDuel?.loserId;
+  if (!loserId) return state;
+  const players = state.players.map((p) => (p.id === loserId ? { ...p, eliminated: true } : p));
+  const survivors = players.filter((p) => !p.eliminated);
+  if (survivors.length <= 1) {
+    return {
+      ...state,
+      players,
+      phase: "finished",
+      currentDuel: null,
+      activePlayerId: null,
+      winnerId: survivors[0]?.id ?? null,
+    };
+  }
+  return beginDuel({ ...state, players });
+}
+
 
 
 type Action =
