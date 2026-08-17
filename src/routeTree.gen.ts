@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DuelRouteImport } from './routes/duel'
 import { Route as GameRouteImport } from './routes/game'
+import { Route as NextRouteImport } from './routes/next'
 import { Route as WinnerRouteImport } from './routes/winner'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const GameRoute = GameRouteImport.update({
   path: '/game',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NextRoute = NextRouteImport.update({
+  id: '/next',
+  path: '/next',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WinnerRoute = WinnerRouteImport.update({
   id: '/winner',
   path: '/winner',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/duel': typeof DuelRoute
   '/game': typeof GameRoute
+  '/next': typeof NextRoute
   '/winner': typeof WinnerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/duel': typeof DuelRoute
   '/game': typeof GameRoute
+  '/next': typeof NextRoute
   '/winner': typeof WinnerRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/duel': typeof DuelRoute
   '/game': typeof GameRoute
+  '/next': typeof NextRoute
   '/winner': typeof WinnerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/duel' | '/game' | '/winner'
+  fullPaths: '/' | '/duel' | '/game' | '/next' | '/winner'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/duel' | '/game' | '/winner'
-  id: '__root__' | '/' | '/duel' | '/game' | '/winner'
+  to: '/' | '/duel' | '/game' | '/next' | '/winner'
+  id: '__root__' | '/' | '/duel' | '/game' | '/next' | '/winner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DuelRoute: typeof DuelRoute
   GameRoute: typeof GameRoute
+  NextRoute: typeof NextRoute
   WinnerRoute: typeof WinnerRoute
 }
 
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/next': {
+      id: '/next'
+      path: '/next'
+      fullPath: '/next'
+      preLoaderRoute: typeof NextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/winner': {
       id: '/winner'
       path: '/winner'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DuelRoute: DuelRoute,
   GameRoute: GameRoute,
+  NextRoute: NextRoute,
   WinnerRoute: WinnerRoute,
 }
 export const routeTree = rootRouteImport
