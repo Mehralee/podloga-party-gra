@@ -213,3 +213,205 @@
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
+
+/* ---------------------------------------------------------------
+ * Television stage presentation layer (projector / 16:9 friendly)
+ * ------------------------------------------------------------- */
+
+@utility stage-shell {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+@utility stage-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 0%, oklch(0.72 0.16 258 / 0.28), transparent 55%),
+    radial-gradient(ellipse at 50% 120%, oklch(0.82 0.14 88 / 0.14), transparent 55%),
+    radial-gradient(ellipse at 50% 50%, transparent 45%, oklch(0.08 0.04 264 / 0.75) 100%);
+}
+
+@utility stage-grid-lines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(oklch(0.82 0.14 88 / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.82 0.14 88 / 0.35) 1px, transparent 1px);
+  background-size: 90px 90px;
+  mask-image: radial-gradient(ellipse at 50% 40%, oklch(0 0 0 / 0.9), transparent 75%);
+}
+
+@utility eyebrow {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.55em;
+  font-size: clamp(0.7rem, 0.9vw, 1rem);
+  color: var(--muted-foreground);
+}
+
+@utility stage-title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+}
+
+@utility gold-rule {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold) 20%,
+    var(--gold-bright) 50%,
+    var(--gold) 80%,
+    transparent
+  );
+}
+
+@utility panel-glass {
+  background: linear-gradient(180deg, oklch(0.3 0.1 262 / 0.85), oklch(0.19 0.08 263 / 0.85));
+  border: 1px solid oklch(0.82 0.14 88 / 0.25);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(6px);
+}
+
+@utility player-podium {
+  transition:
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 400ms ease,
+    opacity 400ms ease;
+}
+
+@utility podium-active {
+  border-color: var(--gold);
+  box-shadow:
+    0 0 0 1px var(--gold) inset,
+    0 0 60px oklch(0.82 0.14 88 / 0.35);
+  transform: translateY(-6px) scale(1.02);
+}
+
+@utility podium-idle {
+  opacity: 0.5;
+  filter: saturate(0.5);
+}
+
+@utility timer-digits {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@utility host-bar {
+  background: linear-gradient(180deg, oklch(0.19 0.08 263 / 0), oklch(0.13 0.06 264 / 0.9));
+}
+
+@keyframes stage-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes stage-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes stage-slam {
+  0% {
+    opacity: 0;
+    transform: scale(1.6);
+    filter: blur(12px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.97);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes gold-sweep {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-danger {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes flash-screen {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.anim-rise {
+  animation: stage-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.anim-drop {
+  animation: stage-drop 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.anim-slam {
+  animation: stage-slam 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.anim-flash {
+  animation: flash-screen 700ms ease-out both;
+}
+.timer-danger {
+  animation: pulse-danger 900ms ease-in-out infinite;
+}
+.delay-1 {
+  animation-delay: 150ms;
+}
+.delay-2 {
+  animation-delay: 320ms;
+}
+.delay-3 {
+  animation-delay: 520ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-rise,
+  .anim-drop,
+  .anim-slam,
+  .anim-flash,
+  .timer-danger,
+  .confetti-piece {
+    animation: none !important;
+  }
+}
