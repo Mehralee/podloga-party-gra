@@ -174,6 +174,7 @@ type Action =
   | { type: "setPhase"; phase: GamePhase }
   | { type: "startGame" }
   | { type: "nextDuel" }
+  | { type: "confirmElimination" }
   | { type: "reveal" }
   | { type: "correct" }
   | { type: "pass" }
