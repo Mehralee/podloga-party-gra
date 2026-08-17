@@ -174,6 +174,7 @@ type Action =
   | { type: "setPhase"; phase: GamePhase }
   | { type: "startGame" }
   | { type: "nextDuel" }
+  | { type: "confirmElimination" }
   | { type: "reveal" }
   | { type: "correct" }
   | { type: "pass" }
@@ -247,6 +248,8 @@ export function reducer(state: GameState, action: Action): GameState {
       });
     case "nextDuel":
       return beginDuel(state);
+    case "confirmElimination":
+      return confirmElimination(state);
     case "reveal":
       return { ...state, revealed: true };
     case "correct": {

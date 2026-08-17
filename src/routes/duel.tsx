@@ -20,60 +20,49 @@ function DuelResultPage() {
   const navigate = useNavigate();
   const duel = state.currentDuel;
   const nameOf = (id?: string | null) => state.players.find((p) => p.id === id)?.name ?? "—";
-  const gameOver = survivingPlayers.length <= 1;
+
+  // The loser is still in the survivor list until the host confirms.
+  const survivorsAfter = survivingPlayers.filter((p) => p.id !== duel?.loserId).length;
+
+  const eliminate = () => {
+    dispatch({ type: "confirmElimination" });
+    navigate({ to: survivorsAfter <= 1 ? "/winner" : "/game" });
+  };
+
+  if (!duel || !duel.winnerId) {
+    return (
+      <Stage title="Duel Result" subtitle="No duel has been played yet.">
+        <div className="panel mx-auto max-w-2xl p-10 text-center">
+          <Button onClick={() => navigate({ to: "/" })}>Back to setup</Button>
+        </div>
+      </Stage>
+    );
+  }
 
   return (
     <Stage
       title="Duel Result"
-      subtitle="Summary of the head-to-head round."
       actions={
-        gameOver ? (
-          <Button size="lg" onClick={() => navigate({ to: "/winner" })}>
-            Winner screen
-          </Button>
-        ) : (
-          <>
-            <Button
-              size="lg"
-              onClick={() => {
-                dispatch({ type: "nextDuel" });
-                navigate({ to: "/game" });
-              }}
-            >
-              Next duel
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                dispatch({ type: "resetGame" });
-                navigate({ to: "/" });
-              }}
-            >
-              Back to setup
-            </Button>
-          </>
-        )
+        <Button size="lg" onClick={eliminate}>
+          ELIMINATE {nameOf(duel.loserId).toUpperCase()}
+        </Button>
       }
     >
-      <div className="panel gold-frame mx-auto max-w-3xl p-10 text-center">
-        {duel ? (
-          <>
-            <p className="font-display text-3xl">
-              {nameOf(duel.challengerId)} vs {nameOf(duel.defenderId)}
-            </p>
-            <p className="text-gold-shine mt-6 text-4xl font-bold">
-              Winner: {nameOf(duel.winnerId)}
-            </p>
-            <p className="mt-3 text-muted-foreground">
-              Eliminated: {nameOf(duel.loserId)} — ran out of time or lost the duel.
-            </p>
-            <p className="mt-6 text-sm text-muted-foreground">
-              Players still in the game: {survivingPlayers.length}
-            </p>
-          </>
-        ) : (
-          <p className="text-muted-foreground">No duel has been played yet.</p>
-        )}
+      <div className="panel gold-frame mx-auto max-w-4xl px-10 py-16 text-center">
+        <p className="text-gold-shine font-display animate-in fade-in zoom-in-95 text-7xl font-bold uppercase duration-500 md:text-8xl">
+          {nameOf(duel.winnerId)} wins!
+        </p>
+        <div className="mt-14">
+          <p className="font-display text-4xl uppercase text-muted-foreground md:text-5xl">
+            {nameOf(duel.loserId)}
+          </p>
+          <p className="mt-2 text-sm font-semibold tracking-[0.5em] text-destructive">ELIMINATED</p>
+        </div>
+        <p className="mt-14 text-sm text-muted-foreground">
+          {survivorsAfter <= 1
+            ? "This is the last duel — the champion is decided."
+            : `Players still in the game after this elimination: ${survivorsAfter}`}
+        </p>
       </div>
     </Stage>
   );

@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Stage } from "@/components/Stage";
+import { Confetti } from "@/components/Confetti";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/game/store";
 
@@ -21,26 +22,31 @@ function WinnerPage() {
   const winner = state.players.find((p) => p.id === state.winnerId);
 
   return (
-    <Stage
-      title="Final Winner"
-      actions={
-        <Button
-          size="lg"
-          onClick={() => {
-            dispatch({ type: "resetGame" });
-            navigate({ to: "/" });
-          }}
-        >
-          New game
-        </Button>
-      }
-    >
-      <div className="panel gold-frame mx-auto max-w-3xl p-16 text-center">
-        <p className="font-display tracking-[0.4em] text-muted-foreground">CHAMPION</p>
-        <p className="text-gold-shine mt-6 text-6xl font-bold">
-          {winner?.name ?? "Not decided yet"}
-        </p>
-      </div>
-    </Stage>
+    <>
+      {winner ? <Confetti /> : null}
+      <Stage
+        title="Final Winner"
+        actions={
+          <Button
+            size="lg"
+            onClick={() => {
+              dispatch({ type: "resetGame" });
+              navigate({ to: "/" });
+            }}
+          >
+            New game
+          </Button>
+        }
+      >
+        <div className="panel gold-frame relative mx-auto max-w-4xl px-10 py-20 text-center">
+          <p className="text-gold-shine font-display text-4xl font-bold tracking-[0.3em]">
+            ZWYCIĘZCA!
+          </p>
+          <p className="text-gold-shine animate-in fade-in zoom-in-95 mt-8 text-7xl font-bold uppercase duration-700 md:text-8xl">
+            {winner?.name ?? "Not decided yet"}
+          </p>
+        </div>
+      </Stage>
+    </>
   );
 }
