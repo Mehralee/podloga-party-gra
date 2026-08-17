@@ -248,6 +248,8 @@ export function reducer(state: GameState, action: Action): GameState {
       });
     case "nextDuel":
       return beginDuel(state);
+    case "confirmElimination":
+      return confirmElimination(state);
     case "reveal":
       return { ...state, revealed: true };
     case "correct": {
