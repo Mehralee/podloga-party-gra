@@ -195,3 +195,21 @@
   border: 2px solid var(--gold);
   box-shadow: 0 0 0 1px oklch(0.35 0.1 262) inset, 0 0 24px oklch(0.82 0.14 88 / 0.25);
 }
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0.9;
+  }
+}
+
+.confetti-piece {
+  border-radius: 2px;
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
