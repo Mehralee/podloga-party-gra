@@ -25,9 +25,15 @@ function DuelResultPage() {
   const survivorsAfter = survivingPlayers.filter((p) => p.id !== duel?.loserId).length;
 
   const eliminate = () => {
-    dispatch({ type: "confirmElimination" });
-    navigate({ to: survivorsAfter <= 1 ? "/winner" : "/game" });
-  };
+  dispatch({ type: "confirmElimination" });
+
+  if (survivorsAfter <= 1) {
+    navigate({ to: "/winner" });
+    return;
+  }
+
+  navigate({ to: "/tournament" });
+};
 
   if (!duel || !duel.winnerId) {
     return (

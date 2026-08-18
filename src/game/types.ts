@@ -1,4 +1,8 @@
-export type GamePhase = "setup" | "playing" | "duel-result" | "finished";
+export type GamePhase =
+  | "setup"
+  | "playing"
+  | "duel-result"
+  | "finished";
 
 export interface Player {
   id: string;
@@ -8,20 +12,15 @@ export interface Player {
 
 export interface Question {
   id: string;
-  /** Key of the image blob stored locally in IndexedDB */
   imageId: string;
-  /** Original file name, shown as a fallback label */
   fileName?: string | undefined;
-  /** Correct answer for this photo */
   answer: string;
 }
 
 export interface Category {
   id: string;
   name: string;
-  /** One fixed hint for the whole category */
   hint: string;
-  /** Ordered list of photo questions */
   questions: Question[];
 }
 
@@ -29,7 +28,6 @@ export interface Duel {
   challengerId: string;
   defenderId: string;
   categoryId: string;
-  /** Question currently shown on the stage */
   questionId: string | null;
   winnerId: string | null;
   loserId: string | null;
@@ -37,21 +35,29 @@ export interface Duel {
 
 export interface GameState {
   phase: GamePhase;
+
   players: Player[];
-  /** Shared category pool — categories are never owned by players */
+
   categories: Category[];
-  /** Questions already used in the current game */
+
   consumedQuestionIds: string[];
+
   currentDuel: Duel | null;
+
+  /*
+   * Exact tournament match currently being played.
+   */
+  activeMatchId: string | null;
+
   activePlayerId: string | null;
-  /** Remaining seconds per player in the current duel */
+
   timers: Record<string, number>;
-  /** Correct answer visible on stage */
+
   revealed: boolean;
-  /** Whole game paused (timers frozen) */
+
   paused: boolean;
+
   winnerId: string | null;
 }
 
-export const DEFAULT_DUEL_TIME = 40;
-
+export const DEFAULT_DUEL_TIME = 4;
