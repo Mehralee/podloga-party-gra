@@ -46,7 +46,7 @@ type BracketMatch = {
 };
 
 function TournamentPage() {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const navigate = useNavigate();
 
   const players = useMemo(
@@ -360,84 +360,89 @@ function TournamentPage() {
    * =====================================================
    */
 
-  function startMatch(
-    match: BracketMatch,
+function startMatch(
+  match: BracketMatch,
+) {
+  if (
+    match.status !==
+    "ready"
   ) {
-    if (
-      match.status !==
-      "ready"
-    ) {
-      return;
-    }
+    return;
+  }
 
-    if (
-      !match.player1Id ||
-      !match.player2Id
-    ) {
-      return;
-    }
-
-    /*
-     * Clear ONLY the old result.
-     */
-    sessionStorage.removeItem(
-      RESULT_KEY,
-    );
-
-    /*
-     * Save exact match information.
-     */
-    sessionStorage.setItem(
-      ACTIVE_MATCH_KEY,
-      JSON.stringify({
-        matchId:
-          match.id,
-        player1Id:
-          match.player1Id,
-        player2Id:
-          match.player2Id,
-      }),
-    );
-
-    /*
-     * Mark exact match as playing.
-     */
-    setMatches(
-      (current) => {
-        const updated =
-          current.map(
-            (
-              m,
-            ): BracketMatch =>
-              m.id ===
-              match.id
-                ? {
-                    ...m,
-                    status:
-                      "playing",
-                  }
-                : m,
-          );
-
-        saveBracket(
-          updated,
-        );
-
-        return updated;
-      },
-    );
-
-    navigate({
-      to: "/next",
-    });
+  if (
+    !match.player1Id ||
+    !match.player2Id
+  ) {
+    return;
   }
 
   /*
-   * =====================================================
-   * REMOVE MATCH
-   * =====================================================
+   * Clear ONLY the old result.
    */
+  sessionStorage.removeItem(
+    RESULT_KEY,
+  );
 
+  /*
+   * Save exact match information.
+   *
+   * The category selection page
+   * will read this.
+   */
+  sessionStorage.setItem(
+    ACTIVE_MATCH_KEY,
+    JSON.stringify({
+      matchId:
+        match.id,
+      player1Id:
+        match.player1Id,
+      player2Id:
+        match.player2Id,
+    }),
+  );
+
+  /*
+   * Mark the match as playing.
+   *
+   * This means the match is currently
+   * being prepared, not that the actual
+   * duel has started.
+   */
+  setMatches(
+    (current) => {
+      const updated =
+        current.map(
+          (
+            m,
+          ): BracketMatch =>
+            m.id ===
+            match.id
+              ? {
+                  ...m,
+                  status:
+                    "playing",
+                }
+              : m,
+        );
+
+      saveBracket(
+        updated,
+      );
+
+      return updated;
+    },
+  );
+
+  /*
+   * Go to category selection.
+   *
+   * DO NOT dispatch startGame here.
+   */
+  navigate({
+    to: "/category",
+  });
+}
   function removeMatch(
     matchId: string,
   ) {

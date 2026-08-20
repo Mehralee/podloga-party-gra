@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CategoryRouteImport } from './routes/category'
 import { Route as DuelRouteImport } from './routes/duel'
 import { Route as GameRouteImport } from './routes/game'
 import { Route as NextRouteImport } from './routes/next'
@@ -19,6 +20,11 @@ import { Route as WinnerRouteImport } from './routes/winner'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoryRoute = CategoryRouteImport.update({
+  id: '/category',
+  path: '/category',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DuelRoute = DuelRouteImport.update({
@@ -49,6 +55,7 @@ const WinnerRoute = WinnerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/category': typeof CategoryRoute
   '/duel': typeof DuelRoute
   '/game': typeof GameRoute
   '/next': typeof NextRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/category': typeof CategoryRoute
   '/duel': typeof DuelRoute
   '/game': typeof GameRoute
   '/next': typeof NextRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/category': typeof CategoryRoute
   '/duel': typeof DuelRoute
   '/game': typeof GameRoute
   '/next': typeof NextRoute
@@ -74,14 +83,25 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/duel' | '/game' | '/next' | '/tournament' | '/winner'
+  fullPaths:
+    '/' | '/category' | '/duel' | '/game' | '/next' | '/tournament' | '/winner'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/duel' | '/game' | '/next' | '/tournament' | '/winner'
-  id: '__root__' | '/' | '/duel' | '/game' | '/next' | '/tournament' | '/winner'
+  to:
+    '/' | '/category' | '/duel' | '/game' | '/next' | '/tournament' | '/winner'
+  id:
+    | '__root__'
+    | '/'
+    | '/category'
+    | '/duel'
+    | '/game'
+    | '/next'
+    | '/tournament'
+    | '/winner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CategoryRoute: typeof CategoryRoute
   DuelRoute: typeof DuelRoute
   GameRoute: typeof GameRoute
   NextRoute: typeof NextRoute
@@ -96,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category': {
+      id: '/category'
+      path: '/category'
+      fullPath: '/category'
+      preLoaderRoute: typeof CategoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/duel': {
@@ -138,6 +165,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CategoryRoute: CategoryRoute,
   DuelRoute: DuelRoute,
   GameRoute: GameRoute,
   NextRoute: NextRoute,

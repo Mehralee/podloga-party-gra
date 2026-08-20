@@ -199,7 +199,100 @@ function beginSpecificDuel(
     winnerId: null,
   };
 }
+function beginSpecificDuelWithCategory(
+  state: GameState,
+  challengerId: string,
+  defenderId: string,
+  matchId: string,
+  categoryId: string,
+): GameState {
+  const challengerExists =
+    state.players.some(
+      (p) =>
+        p.id === challengerId,
+    );
 
+  const defenderExists =
+    state.players.some(
+      (p) =>
+        p.id === defenderId,
+    );
+
+  if (
+    !challengerExists ||
+    !defenderExists ||
+    challengerId === defenderId
+  ) {
+    return state;
+  }
+
+  const category =
+    state.categories.find(
+      (c) =>
+        c.id === categoryId,
+    );
+
+  if (!category) {
+    return state;
+  }
+
+  const question =
+    nextQuestion(
+      state,
+      category.id,
+    );
+
+  if (!question) {
+    return {
+      ...state,
+      phase: "finished",
+      currentDuel: null,
+      activeMatchId: matchId,
+    };
+  }
+
+  return {
+    ...state,
+
+    phase: "playing",
+
+    activeMatchId:
+      matchId,
+
+    currentDuel: {
+      challengerId,
+      defenderId,
+      categoryId:
+        category.id,
+      questionId:
+        question.id,
+      winnerId: null,
+      loserId: null,
+    },
+
+    consumedQuestionIds: [
+      ...state.consumedQuestionIds,
+      question.id,
+    ],
+
+    activePlayerId:
+      challengerId,
+
+    timers: {
+      [challengerId]:
+        DEFAULT_DUEL_TIME,
+
+      [defenderId]:
+        DEFAULT_DUEL_TIME,
+    },
+
+    revealed: false,
+
+    paused: false,
+
+    winnerId: null,
+  };
+}
 function advanceQuestion(
   state: GameState,
 ): GameState {
@@ -304,6 +397,13 @@ type Action =
       defenderId: string;
     }
   | {
+      type: "startGameWithCategory";
+      matchId: string;
+      challengerId: string;
+      defenderId: string;
+      categoryId: string;
+    }
+  | {
       type: "nextDuel";
     }
   | {
@@ -403,6 +503,16 @@ export function reducer(
         action.challengerId,
         action.defenderId,
         action.matchId,
+      );
+    }
+
+    case "startGameWithCategory": {
+      return beginSpecificDuelWithCategory(
+        state,
+        action.challengerId,
+        action.defenderId,
+        action.matchId,
+        action.categoryId,
       );
     }
 

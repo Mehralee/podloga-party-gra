@@ -4,25 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
- */
-
 @theme inline {
   --font-display: var(--font-display);
   --font-body: var(--font-body);
+
   --color-gold: var(--gold);
   --color-gold-bright: var(--gold-bright);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -30,6 +18,7 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -50,101 +39,146 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
 :root {
   --radius: 0.75rem;
+
   --background: oklch(0.19 0.09 262);
   --foreground: oklch(0.97 0.01 250);
+
   --card: oklch(0.25 0.1 262);
   --card-foreground: oklch(0.97 0.01 250);
+
   --popover: oklch(0.25 0.1 262);
   --popover-foreground: oklch(0.97 0.01 250);
+
   --primary: oklch(0.82 0.14 88);
   --primary-foreground: oklch(0.21 0.09 262);
+
   --secondary: oklch(0.33 0.11 262);
   --secondary-foreground: oklch(0.97 0.01 250);
+
   --muted: oklch(0.3 0.09 262);
   --muted-foreground: oklch(0.78 0.05 255);
+
   --accent: oklch(0.55 0.19 258);
   --accent-foreground: oklch(0.98 0.01 250);
+
   --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.98 0.01 250);
+
   --border: oklch(0.42 0.11 262);
   --input: oklch(0.32 0.09 262);
   --ring: oklch(0.82 0.14 88);
+
   --chart-1: oklch(0.82 0.14 88);
   --chart-2: oklch(0.6 0.18 258);
   --chart-3: oklch(0.7 0.12 220);
   --chart-4: oklch(0.5 0.15 265);
   --chart-5: oklch(0.9 0.09 95);
+
   --sidebar: oklch(0.22 0.09 262);
   --sidebar-foreground: oklch(0.97 0.01 250);
   --sidebar-primary: oklch(0.82 0.14 88);
   --sidebar-primary-foreground: oklch(0.21 0.09 262);
   --sidebar-accent: oklch(0.33 0.11 262);
-  --sidebar-accent-foreground: oklch(0.97 0.01 250);
   --sidebar-border: oklch(0.42 0.11 262);
   --sidebar-ring: oklch(0.82 0.14 88);
 
   --gold: oklch(0.82 0.14 88);
   --gold-bright: oklch(0.93 0.11 95);
-  --gradient-gold: linear-gradient(180deg, oklch(0.93 0.11 95), oklch(0.74 0.14 78));
-  --gradient-stage: radial-gradient(
+
+  --gradient-gold: linear-gradient(
+    180deg,
+    oklch(0.93 0.11 95),
+    oklch(0.74 0.14 78)
+  );
+
+  --gradient-stage:
+    radial-gradient(
       circle at 50% 20%,
       oklch(0.42 0.16 258 / 0.55),
       transparent 60%
     ),
-    linear-gradient(180deg, oklch(0.21 0.1 262), oklch(0.15 0.07 264));
-  --shadow-panel: 0 20px 50px -20px oklch(0 0 0 / 0.7);
+    linear-gradient(
+      180deg,
+      oklch(0.21 0.1 262),
+      oklch(0.15 0.07 264)
+    );
+
+  --shadow-panel:
+    0 20px 50px -20px oklch(0 0 0 / 0.7);
+
   --font-display: "Oswald", system-ui, sans-serif;
   --font-body: "Barlow", system-ui, sans-serif;
+
+  /* =========================================================
+     RACCOON COLORS
+     ========================================================= */
+
+  --raccoon-body: oklch(0.58 0.035 260);
+  --raccoon-dark: oklch(0.32 0.035 260);
+  --raccoon-light: oklch(0.76 0.025 260);
+  --raccoon-belly: oklch(0.68 0.025 260);
+  --raccoon-black: oklch(0.17 0.025 260);
+  --raccoon-pink: oklch(0.72 0.16 10);
 }
 
 .dark {
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
+
   --card: oklch(0.208 0.042 265.755);
   --card-foreground: oklch(0.984 0.003 247.858);
+
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
+
   --primary: oklch(0.929 0.013 255.508);
   --primary-foreground: oklch(0.208 0.042 265.755);
+
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
+
   --muted: oklch(0.279 0.041 260.031);
   --muted-foreground: oklch(0.704 0.04 256.788);
+
   --accent: oklch(0.279 0.041 260.031);
   --accent-foreground: oklch(0.984 0.003 247.858);
+
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.984 0.003 247.858);
+
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.551 0.027 264.364);
+
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+
   --sidebar: oklch(0.208 0.042 265.755);
   --sidebar-foreground: oklch(0.984 0.003 247.858);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
   --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
@@ -159,7 +193,6 @@
     color: var(--color-foreground);
   }
 }
-
 
 @layer base {
   body {
@@ -178,6 +211,10 @@
   }
 }
 
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
 @utility text-gold-shine {
   background: var(--gradient-gold);
   background-clip: text;
@@ -185,7 +222,13 @@
 }
 
 @utility panel {
-  background: linear-gradient(180deg, oklch(0.28 0.1 262), oklch(0.22 0.09 263));
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.28 0.1 262),
+      oklch(0.22 0.09 263)
+    );
+
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-panel);
@@ -193,171 +236,1092 @@
 
 @utility gold-frame {
   border: 2px solid var(--gold);
-  box-shadow: 0 0 0 1px oklch(0.35 0.1 262) inset, 0 0 24px oklch(0.82 0.14 88 / 0.25);
+
+  box-shadow:
+    0 0 0 1px oklch(0.35 0.1 262) inset,
+    0 0 24px oklch(0.82 0.14 88 / 0.25);
 }
+
+/* =========================================================
+   CONFETTI
+   ========================================================= */
 
 @keyframes confetti-fall {
   0% {
-    transform: translateY(-10vh) rotate(0deg);
+    transform:
+      translateY(-10vh)
+      rotate(0deg);
+
     opacity: 1;
   }
+
   100% {
-    transform: translateY(110vh) rotate(720deg);
+    transform:
+      translateY(110vh)
+      rotate(720deg);
+
     opacity: 0.9;
   }
 }
 
 .confetti-piece {
   border-radius: 2px;
+
   animation-name: confetti-fall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
 
-/* ---------------------------------------------------------------
- * Television stage presentation layer (projector / 16:9 friendly)
- * ------------------------------------------------------------- */
+/* =========================================================
+   🎆 BIRTHDAY CELEBRATION
+   ========================================================= */
+
+.birthday-celebration {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  overflow: hidden;
+
+  z-index: 1;
+}
+
+/* =========================================================
+   BIRTHDAY CONFETTI
+   ========================================================= */
+
+.birthday-confetti {
+  position: absolute;
+  inset: -15% 0 0;
+
+  overflow: hidden;
+
+  opacity: 0.75;
+}
+
+.birthday-confetti .confetti-piece {
+  position: absolute;
+
+  top: -20px;
+
+  display: block;
+
+  border-radius: 1px;
+
+  background: var(--gold);
+
+  box-shadow:
+    0 0 5px
+    oklch(0.93 0.11 95 / 0.25);
+
+  animation:
+    birthday-confetti-fall
+    linear
+    infinite;
+
+  will-change:
+    transform,
+    opacity;
+}
+
+.birthday-confetti
+  .confetti-piece:nth-child(3n) {
+  background:
+    oklch(0.72 0.16 258);
+}
+
+.birthday-confetti
+  .confetti-piece:nth-child(4n) {
+  background:
+    oklch(0.76 0.14 10);
+}
+
+.birthday-confetti
+  .confetti-piece:nth-child(5n) {
+  background:
+    oklch(0.78 0.13 145);
+}
+
+/* =========================================================
+   REALISTIC CONFETTI MOTION
+   ========================================================= */
+
+@keyframes birthday-confetti-fall {
+  0% {
+    transform:
+      translate3d(
+        0,
+        -30px,
+        0
+      )
+      rotate(0deg);
+
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 0.85;
+  }
+
+  25% {
+    transform:
+      translate3d(
+        18px,
+        25vh,
+        0
+      )
+      rotate(180deg);
+  }
+
+  50% {
+    transform:
+      translate3d(
+        -14px,
+        52vh,
+        0
+      )
+      rotate(390deg);
+  }
+
+  75% {
+    transform:
+      translate3d(
+        20px,
+        78vh,
+        0
+      )
+      rotate(570deg);
+  }
+
+  100% {
+    transform:
+      translate3d(
+        -10px,
+        115vh,
+        0
+      )
+      rotate(760deg);
+
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   🎆 FIREWORK BASE
+   ========================================================= */
+
+.firework {
+  position: absolute;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background:
+    var(--gold-bright);
+
+  box-shadow:
+    0 0 8px
+    var(--gold-bright),
+    0 0 18px
+    oklch(0.93 0.11 95 / 0.75);
+
+  animation:
+    firework-burst
+    5.5s
+    ease-out
+    infinite;
+}
+
+/* =========================================================
+   FIREWORK PARTICLES
+   ========================================================= */
+
+.firework span {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 2px;
+  height: 30px;
+
+  margin-left: -1px;
+  margin-top: -15px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      var(--gold-bright),
+      oklch(0.93 0.11 95 / 0)
+    );
+
+  transform-origin:
+    50% 100%;
+
+  opacity: 0;
+
+  animation:
+    firework-ray
+    5.5s
+    ease-out
+    infinite;
+}
+
+/* =========================================================
+   FIREWORK PARTICLE ROTATIONS
+   ========================================================= */
+
+.firework span:nth-child(1) {
+  transform: rotate(0deg);
+}
+
+.firework span:nth-child(2) {
+  transform: rotate(30deg);
+}
+
+.firework span:nth-child(3) {
+  transform: rotate(60deg);
+}
+
+.firework span:nth-child(4) {
+  transform: rotate(90deg);
+}
+
+.firework span:nth-child(5) {
+  transform: rotate(120deg);
+}
+
+.firework span:nth-child(6) {
+  transform: rotate(150deg);
+}
+
+.firework span:nth-child(7) {
+  transform: rotate(180deg);
+}
+
+.firework span:nth-child(8) {
+  transform: rotate(210deg);
+}
+
+.firework span:nth-child(9) {
+  transform: rotate(240deg);
+}
+
+.firework span:nth-child(10) {
+  transform: rotate(270deg);
+}
+
+.firework span:nth-child(11) {
+  transform: rotate(300deg);
+}
+
+.firework span:nth-child(12) {
+  transform: rotate(330deg);
+}
+
+/* =========================================================
+   FIREWORK LOCATIONS
+   ========================================================= */
+
+.firework-one {
+  left: 72%;
+  top: 24%;
+
+  animation-delay:
+    0s;
+}
+
+.firework-two {
+  left: 88%;
+  top: 54%;
+
+  transform:
+    scale(0.72);
+
+  animation-delay:
+    2.2s;
+}
+
+.firework-three {
+  left: 55%;
+  top: 15%;
+
+  transform:
+    scale(0.55);
+
+  animation-delay:
+    4s;
+}
+
+/* =========================================================
+   FIREWORK EXPLOSION
+   ========================================================= */
+
+@keyframes firework-burst {
+  0% {
+    transform:
+      scale(0.05);
+
+    opacity: 0;
+  }
+
+  5% {
+    transform:
+      scale(0.4);
+
+    opacity: 1;
+  }
+
+  11% {
+    transform:
+      scale(1);
+
+    opacity: 1;
+  }
+
+  20% {
+    transform:
+      scale(1.12);
+
+    opacity: 0.8;
+  }
+
+  32% {
+    transform:
+      scale(1.3);
+
+    opacity: 0;
+  }
+
+  100% {
+    transform:
+      scale(1.3);
+
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   FIREWORK RAYS
+   ========================================================= */
+
+@keyframes firework-ray {
+  0%,
+  4% {
+    height: 0;
+
+    opacity: 0;
+  }
+
+  8% {
+    height: 10px;
+
+    opacity: 1;
+  }
+
+  15% {
+    height: 36px;
+
+    opacity: 0.95;
+  }
+
+  24% {
+    height: 52px;
+
+    opacity: 0.35;
+  }
+
+  32% {
+    height: 58px;
+
+    opacity: 0;
+  }
+
+  100% {
+    height: 58px;
+
+    opacity: 0;
+  }
+}
+
+/* =============================================================
+   🦝 RACCOON WALKING SYSTEM
+   ============================================================= */
+
+.raccoon-walk {
+  animation:
+    raccoon-cross-stage
+    22s
+    linear
+    infinite;
+
+  will-change: transform;
+}
+
+.raccoon-character {
+  width: 180px;
+  height: 125px;
+
+  overflow: visible;
+
+  transform-origin: center bottom;
+
+  animation:
+    raccoon-direction
+    22s
+    linear
+    infinite;
+
+  will-change: transform;
+}
+
+/* =========================================================
+   RACCOON BODY
+   ========================================================= */
+
+.raccoon-body {
+  transform-origin: 82px 68px;
+
+  animation:
+    raccoon-body-walk
+    420ms
+    ease-in-out
+    infinite;
+}
+
+/* =========================================================
+   RACCOON LEGS
+   ========================================================= */
+
+.raccoon-leg-front {
+  transform-box: fill-box;
+  transform-origin: top center;
+
+  animation:
+    raccoon-front-leg
+    420ms
+    ease-in-out
+    infinite;
+}
+
+.raccoon-leg-back {
+  transform-box: fill-box;
+  transform-origin: top center;
+
+  animation:
+    raccoon-back-leg
+    420ms
+    ease-in-out
+    infinite;
+}
+
+/* =========================================================
+   RACCOON ARMS
+   ========================================================= */
+
+.raccoon-arm-front {
+  transform-box: fill-box;
+  transform-origin: top center;
+
+  animation:
+    raccoon-front-arm
+    420ms
+    ease-in-out
+    infinite;
+}
+
+.raccoon-arm-back {
+  transform-box: fill-box;
+  transform-origin: top center;
+
+  animation:
+    raccoon-back-arm
+    420ms
+    ease-in-out
+    infinite;
+}
+
+/* =========================================================
+   RACCOON TAIL
+   ========================================================= */
+
+.raccoon-tail {
+  transform-box: fill-box;
+  transform-origin: left center;
+
+  animation:
+    raccoon-tail
+    700ms
+    ease-in-out
+    infinite alternate;
+}
+
+/* =========================================================
+   RACCOON EARS
+   ========================================================= */
+
+.raccoon-ear {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+}
+
+.raccoon-ear-left {
+  animation:
+    raccoon-ear-left
+    1.8s
+    ease-in-out
+    infinite;
+}
+
+.raccoon-ear-right {
+  animation:
+    raccoon-ear-right
+    1.8s
+    ease-in-out
+    infinite;
+}
+
+/* =========================================================
+   🎈 BIRTHDAY BALLOON
+   ========================================================= */
+
+.raccoon-balloon {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+
+  animation:
+    birthday-balloon
+    1.8s
+    ease-in-out
+    infinite;
+}
+
+/* =========================================================
+   RACCOON WALK ACROSS SCREEN
+   ========================================================= */
+
+@keyframes raccoon-cross-stage {
+  0% {
+    transform:
+      translateX(-200px);
+  }
+
+  44% {
+    transform:
+      translateX(
+        calc(100vw - 190px)
+      );
+  }
+
+  46% {
+    transform:
+      translateX(
+        calc(100vw - 190px)
+      );
+  }
+
+  94% {
+    transform:
+      translateX(-200px);
+  }
+
+  100% {
+    transform:
+      translateX(-200px);
+  }
+}
+
+/* =========================================================
+   RACCOON TURN
+   ========================================================= */
+
+@keyframes raccoon-direction {
+  0%,
+  44% {
+    transform:
+      scaleX(1);
+  }
+
+  46%,
+  94% {
+    transform:
+      scaleX(-1);
+  }
+
+  96%,
+  100% {
+    transform:
+      scaleX(1);
+  }
+}
+
+/* =========================================================
+   BODY WALK
+   ========================================================= */
+
+@keyframes raccoon-body-walk {
+  0% {
+    transform:
+      translateY(0)
+      rotate(-1deg);
+  }
+
+  25% {
+    transform:
+      translateY(-2px)
+      rotate(1deg);
+  }
+
+  50% {
+    transform:
+      translateY(0)
+      rotate(-1deg);
+  }
+
+  75% {
+    transform:
+      translateY(-2px)
+      rotate(1deg);
+  }
+
+  100% {
+    transform:
+      translateY(0)
+      rotate(-1deg);
+  }
+}
+
+/* =========================================================
+   LEGS
+   ========================================================= */
+
+@keyframes raccoon-front-leg {
+  0% {
+    transform:
+      rotate(22deg);
+  }
+
+  50% {
+    transform:
+      rotate(-22deg);
+  }
+
+  100% {
+    transform:
+      rotate(22deg);
+  }
+}
+
+@keyframes raccoon-back-leg {
+  0% {
+    transform:
+      rotate(-22deg);
+  }
+
+  50% {
+    transform:
+      rotate(22deg);
+  }
+
+  100% {
+    transform:
+      rotate(-22deg);
+  }
+}
+
+/* =========================================================
+   ARMS
+   ========================================================= */
+
+@keyframes raccoon-front-arm {
+  0% {
+    transform:
+      rotate(-14deg);
+  }
+
+  50% {
+    transform:
+      rotate(18deg);
+  }
+
+  100% {
+    transform:
+      rotate(-14deg);
+  }
+}
+
+@keyframes raccoon-back-arm {
+  0% {
+    transform:
+      rotate(18deg);
+  }
+
+  50% {
+    transform:
+      rotate(-14deg);
+  }
+
+  100% {
+    transform:
+      rotate(18deg);
+  }
+}
+
+/* =========================================================
+   TAIL
+   ========================================================= */
+
+@keyframes raccoon-tail {
+  0% {
+    transform:
+      rotate(-7deg);
+  }
+
+  100% {
+    transform:
+      rotate(7deg);
+  }
+}
+
+/* =========================================================
+   EARS
+   ========================================================= */
+
+@keyframes raccoon-ear-left {
+  0%,
+  75%,
+  100% {
+    transform:
+      rotate(0deg);
+  }
+
+  82% {
+    transform:
+      rotate(-8deg);
+  }
+
+  89% {
+    transform:
+      rotate(3deg);
+  }
+}
+
+@keyframes raccoon-ear-right {
+  0%,
+  72%,
+  100% {
+    transform:
+      rotate(0deg);
+  }
+
+  79% {
+    transform:
+      rotate(7deg);
+  }
+
+  86% {
+    transform:
+      rotate(-3deg);
+  }
+}
+
+/* =========================================================
+   🎈 BALLOON FLOATING
+   ========================================================= */
+
+@keyframes birthday-balloon {
+  0% {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  25% {
+    transform:
+      translateY(-3px)
+      rotate(2deg);
+  }
+
+  50% {
+    transform:
+      translateY(-6px)
+      rotate(-1deg);
+  }
+
+  75% {
+    transform:
+      translateY(-3px)
+      rotate(2deg);
+  }
+
+  100% {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+}
+
+/* =========================================================
+   TELEVISION STAGE PRESENTATION
+   ========================================================= */
 
 @utility stage-shell {
   position: relative;
+
   min-height: 100vh;
   min-height: 100dvh;
+
   overflow: hidden;
 }
 
 @utility stage-vignette {
   position: fixed;
+
   inset: 0;
+
   pointer-events: none;
+
   background:
-    radial-gradient(ellipse at 50% 0%, oklch(0.72 0.16 258 / 0.28), transparent 55%),
-    radial-gradient(ellipse at 50% 120%, oklch(0.82 0.14 88 / 0.14), transparent 55%),
-    radial-gradient(ellipse at 50% 50%, transparent 45%, oklch(0.08 0.04 264 / 0.75) 100%);
+    radial-gradient(
+      ellipse at 50% 0%,
+      oklch(0.72 0.16 258 / 0.28),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 50% 120%,
+      oklch(0.82 0.14 88 / 0.14),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 50% 50%,
+      transparent 45%,
+      oklch(0.08 0.04 264 / 0.75) 100%
+    );
 }
 
 @utility stage-grid-lines {
   position: fixed;
+
   inset: 0;
+
   pointer-events: none;
+
   opacity: 0.14;
+
   background-image:
-    linear-gradient(oklch(0.82 0.14 88 / 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.82 0.14 88 / 0.35) 1px, transparent 1px);
+    linear-gradient(
+      oklch(0.82 0.14 88 / 0.35) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      oklch(0.82 0.14 88 / 0.35) 1px,
+      transparent 1px
+    );
+
   background-size: 90px 90px;
-  mask-image: radial-gradient(ellipse at 50% 40%, oklch(0 0 0 / 0.9), transparent 75%);
+
+  mask-image:
+    radial-gradient(
+      ellipse at 50% 40%,
+      oklch(0 0 0 / 0.9),
+      transparent 75%
+    );
 }
 
 @utility eyebrow {
   font-family: var(--font-display);
+
   text-transform: uppercase;
+
   letter-spacing: 0.55em;
-  font-size: clamp(0.7rem, 0.9vw, 1rem);
+
+  font-size:
+    clamp(
+      0.7rem,
+      0.9vw,
+      1rem
+    );
+
   color: var(--muted-foreground);
 }
 
 @utility stage-title {
   font-family: var(--font-display);
+
   text-transform: uppercase;
+
   font-weight: 700;
+
   line-height: 0.95;
+
   letter-spacing: 0.04em;
 }
 
 @utility gold-rule {
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--gold) 20%,
-    var(--gold-bright) 50%,
-    var(--gold) 80%,
-    transparent
-  );
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--gold) 20%,
+      var(--gold-bright) 50%,
+      var(--gold) 80%,
+      transparent
+    );
 }
 
 @utility panel-glass {
-  background: linear-gradient(180deg, oklch(0.3 0.1 262 / 0.85), oklch(0.19 0.08 263 / 0.85));
-  border: 1px solid oklch(0.82 0.14 88 / 0.25);
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.3 0.1 262 / 0.85),
+      oklch(0.19 0.08 263 / 0.85)
+    );
+
+  border:
+    1px solid
+    oklch(0.82 0.14 88 / 0.25);
+
   border-radius: var(--radius-xl);
+
   box-shadow: var(--shadow-panel);
+
   backdrop-filter: blur(6px);
 }
 
 @utility player-podium {
   transition:
-    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 400ms
+      cubic-bezier(
+        0.22,
+        1,
+        0.36,
+        1
+      ),
     box-shadow 400ms ease,
     opacity 400ms ease;
 }
 
 @utility podium-active {
   border-color: var(--gold);
+
   box-shadow:
     0 0 0 1px var(--gold) inset,
-    0 0 60px oklch(0.82 0.14 88 / 0.35);
-  transform: translateY(-6px) scale(1.02);
+    0 0 60px
+      oklch(0.82 0.14 88 / 0.35);
+
+  transform:
+    translateY(-6px)
+    scale(1.02);
 }
 
 @utility podium-idle {
   opacity: 0.5;
-  filter: saturate(0.5);
+
+  filter:
+    saturate(0.5);
 }
 
 @utility timer-digits {
   font-family: var(--font-display);
-  font-variant-numeric: tabular-nums;
+
+  font-variant-numeric:
+    tabular-nums;
+
   font-weight: 700;
+
   line-height: 1;
 }
 
 @utility host-bar {
-  background: linear-gradient(180deg, oklch(0.19 0.08 263 / 0), oklch(0.13 0.06 264 / 0.9));
+  background:
+    linear-gradient(
+      180deg,
+      oklch(0.19 0.08 263 / 0),
+      oklch(0.13 0.06 264 / 0.9)
+    );
 }
+
+/* =========================================================
+   STAGE ANIMATIONS
+   ========================================================= */
 
 @keyframes stage-rise {
   from {
     opacity: 0;
-    transform: translateY(28px) scale(0.98);
+
+    transform:
+      translateY(28px)
+      scale(0.98);
   }
+
   to {
     opacity: 1;
-    transform: none;
+
+    transform:
+      none;
   }
 }
 
 @keyframes stage-drop {
   from {
     opacity: 0;
-    transform: translateY(-40px);
+
+    transform:
+      translateY(-40px);
   }
+
   to {
     opacity: 1;
-    transform: none;
+
+    transform:
+      none;
   }
 }
 
 @keyframes stage-slam {
   0% {
     opacity: 0;
-    transform: scale(1.6);
-    filter: blur(12px);
+
+    transform:
+      scale(1.6);
+
+    filter:
+      blur(12px);
   }
+
   60% {
     opacity: 1;
-    transform: scale(0.97);
-    filter: blur(0);
+
+    transform:
+      scale(0.97);
+
+    filter:
+      blur(0);
   }
+
   100% {
-    transform: scale(1);
+    transform:
+      scale(1);
   }
 }
 
 @keyframes gold-sweep {
   from {
-    background-position: -200% 0;
+    background-position:
+      -200% 0;
   }
+
   to {
-    background-position: 200% 0;
+    background-position:
+      200% 0;
   }
 }
 
@@ -366,6 +1330,7 @@
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.35;
   }
@@ -375,35 +1340,82 @@
   from {
     opacity: 0.55;
   }
+
   to {
     opacity: 0;
   }
 }
 
 .anim-rise {
-  animation: stage-rise 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation:
+    stage-rise
+    600ms
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    )
+    both;
 }
+
 .anim-drop {
-  animation: stage-drop 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation:
+    stage-drop
+    500ms
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    )
+    both;
 }
+
 .anim-slam {
-  animation: stage-slam 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation:
+    stage-slam
+    700ms
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    )
+    both;
 }
+
 .anim-flash {
-  animation: flash-screen 700ms ease-out both;
+  animation:
+    flash-screen
+    700ms
+    ease-out
+    both;
 }
+
 .timer-danger {
-  animation: pulse-danger 900ms ease-in-out infinite;
+  animation:
+    pulse-danger
+    900ms
+    ease-in-out
+    infinite;
 }
+
 .delay-1 {
   animation-delay: 150ms;
 }
+
 .delay-2 {
   animation-delay: 320ms;
 }
+
 .delay-3 {
   animation-delay: 520ms;
 }
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   .anim-rise,
@@ -411,7 +1423,49 @@
   .anim-slam,
   .anim-flash,
   .timer-danger,
-  .confetti-piece {
+  .confetti-piece,
+
+  .birthday-celebration,
+  .birthday-confetti,
+  .firework,
+  .firework span,
+
+  .raccoon-walk,
+  .raccoon-character,
+  .raccoon-body,
+  .raccoon-leg-front,
+  .raccoon-leg-back,
+  .raccoon-arm-front,
+  .raccoon-arm-back,
+  .raccoon-tail,
+  .raccoon-ear-left,
+  .raccoon-ear-right,
+  .raccoon-balloon {
     animation: none !important;
+  }
+}
+
+/* =========================================================
+   MOBILE ADJUSTMENTS
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .birthday-confetti {
+    opacity: 0.55;
+  }
+
+  .firework-one {
+    left: 78%;
+    top: 20%;
+  }
+
+  .firework-two {
+    left: 90%;
+    top: 58%;
+  }
+
+  .firework-three {
+    left: 62%;
+    top: 12%;
   }
 }
