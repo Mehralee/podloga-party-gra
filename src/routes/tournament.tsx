@@ -428,7 +428,7 @@ function TournamentPage() {
     );
 
     navigate({
-      to: "/game",
+      to: "/next",
     });
   }
 
@@ -468,7 +468,7 @@ function TournamentPage() {
   function resetTournament() {
     const confirmed =
       window.confirm(
-        "Reset the tournament? The current bracket and all results will be lost.",
+        "Zresetować turniej? Obecna siatka i wszystkie wyniki zostaną utracone.",
       );
 
     if (!confirmed) {
@@ -509,14 +509,14 @@ function TournamentPage() {
     id: string | null,
   ) {
     if (!id) {
-      return "TBD";
+      return "???";
     }
 
     return (
       state.players.find(
         (p) =>
           p.id === id,
-      )?.name ?? "TBD"
+      )?.name ?? "???"
     );
   }
 
@@ -540,7 +540,7 @@ function TournamentPage() {
   return (
     <Stage
       title="The Floor"
-      subtitle="Tournament"
+      subtitle="Turniej"
       actions={
         <div className="flex items-center gap-3">
           {drawComplete && (
@@ -551,7 +551,7 @@ function TournamentPage() {
                 resetTournament
               }
             >
-              RESET TOURNAMENT
+              RESETUJ TURNIEJ
             </Button>
           )}
 
@@ -567,8 +567,8 @@ function TournamentPage() {
               }
             >
               {drawing
-                ? "DRAWING..."
-                : "DRAW TOURNAMENT"}
+                ? "LOSOWANIE..."
+                : "LOSUJ TURNIEJ"}
             </Button>
           )}
         </div>
@@ -581,7 +581,7 @@ function TournamentPage() {
               {drawing ? (
                 <>
                   <p className="eyebrow">
-                    RANDOMIZING PLAYERS
+                    LOSOWANIE GRACZY
                   </p>
 
                   <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -604,17 +604,16 @@ function TournamentPage() {
                 <>
                   <p className="eyebrow">
                     {players.length}{" "}
-                    PLAYERS
+                    GRACZY
                   </p>
 
                   <h2 className="text-gold-shine mt-4 font-display text-6xl uppercase">
-                    Ready?
+                    Gotowi?
                   </h2>
 
                   <p className="mt-4 text-muted-foreground">
-                    The complete tournament
-                    bracket will be randomly
-                    generated.
+                    Cała siatka turniejowa
+                    zostanie wylosowana.
                   </p>
                 </>
               )}
@@ -646,8 +645,8 @@ function TournamentPage() {
                     >
                       <p className="mb-5 text-center font-display text-xl uppercase text-primary">
                         {isFinal
-                          ? "FINAL"
-                          : `ROUND ${round}`}
+                          ? "FINAŁ"
+                          : `RUNDA ${round}`}
                       </p>
 
                       <div className="flex flex-col justify-center gap-6">
@@ -782,21 +781,21 @@ function BracketCard({
             size="sm"
             onClick={onStart}
           >
-            START GAME
+            ROZPOCZNIJ
           </Button>
         )}
 
         {match.status ===
           "playing" && (
           <div className="flex flex-1 items-center justify-center rounded bg-primary/10 px-2 py-2 text-xs uppercase text-primary">
-            IN GAME
+            W TRAKCIE
           </div>
         )}
 
         {match.status ===
           "finished" && (
           <div className="flex flex-1 items-center justify-center rounded bg-primary/10 px-2 py-2 text-xs uppercase text-primary">
-            FINISHED
+            ZAKOŃCZONE
           </div>
         )}
 

@@ -3,20 +3,18 @@ import { Stage } from "@/components/Stage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createQuestion, newImageId, useGame } from "@/game/store";
-import { deleteImage, putImage, releaseImageUrl } from "@/game/imageStore";
-import { useImageUrl } from "@/game/useImageUrl";
+import { useGame } from "@/game/store";
 import type { Category, Question } from "@/game/types";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Game Setup — The Floor Party Game" },
+      { title: "Ustawienia gry — The Floor" },
       {
         name: "description",
         content:
-          "Set up players and the shared category pool for The Floor party game.",
+          "Dodaj graczy przed rozpoczęciem gry The Floor.",
       },
     ],
   }),
@@ -24,7 +22,7 @@ export const Route = createFileRoute("/")({
 });
 
 function SetupPage() {
-  const { state, dispatch, hydrated } = useGame();
+  const { state, hydrated } = useGame();
   const navigate = useNavigate();
 
   const namedPlayers = state.players.every((p) => p.name.trim());
@@ -42,19 +40,18 @@ function SetupPage() {
 
   return (
     <Stage
-      title="Game Setup"
-      subtitle="Add your players and build the shared category pool."
+      title="Ustawienia gry"
+      subtitle="Dodaj graczy i sprawdź pulę kategorii."
       actions={
         <Button
         size="lg"
         disabled={!canStart}
         onClick={() => {
-          console.log("START GAME CLICKED");
           navigate({ to: "/tournament" });
           }
           }
 >
-  Start game
+  Rozpocznij grę
 </Button>
       }
     >
@@ -67,8 +64,7 @@ function SetupPage() {
 
       {!canStart && hydrated && (
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Every player needs a name. Every category needs a name, hint and
-          answered photo.
+          Każdy gracz musi mieć nazwę.
         </p>
       )}
     </Stage>
@@ -80,10 +76,10 @@ function PlayersPanel() {
 
   return (
     <section className="panel p-6">
-      <h2 className="text-xl font-semibold">Players</h2>
+      <h2 className="text-xl font-semibold">Gracze</h2>
 
       <div className="mt-4 max-w-40">
-        <Label htmlFor="count">Number of players</Label>
+        <Label htmlFor="count">Liczba graczy</Label>
         <Input
           id="count"
           type="number"
@@ -108,7 +104,7 @@ function PlayersPanel() {
 
             <Input
               value={player.name}
-              placeholder={`Player ${i + 1}`}
+              placeholder={`Gracz ${i + 1}`}
               onChange={(e) =>
                 dispatch({
                   type: "setPlayerName",
@@ -125,41 +121,28 @@ function PlayersPanel() {
 }
 
 function CategoriesPanel() {
-  const { state, dispatch } = useGame();
+  const { state } = useGame();
 
   return (
     <section className="panel p-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold">Category Pool</h2>
+          <h2 className="text-xl font-semibold">Pula kategorii</h2>
           <p className="text-sm text-muted-foreground">
-            Shared by the whole game.
+            Wspólna dla całej gry.
           </p>
         </div>
-
-        <Button
-          variant="secondary"
-          onClick={() => dispatch({ type: "addCategory" })}
-        >
-          + Add category
-        </Button>
       </div>
 
-      {state.categories.length === 0 ? (
-        <p className="mt-8 text-sm text-muted-foreground">
-          Add your first category.
-        </p>
-      ) : (
-        <div className="mt-5 space-y-5">
-          {state.categories.map((category, index) => (
-            <CategoryEditor
-              key={category.id}
-              category={category}
-              index={index}
-            />
-          ))}
-        </div>
-      )}
+      <div className="mt-5 space-y-5">
+        {state.categories.map((category, index) => (
+          <CategoryEditor
+            key={category.id}
+            category={category}
+            index={index}
+          />
+        ))}
+      </div>
     </section>
   );
 }
@@ -171,7 +154,6 @@ function CategoryEditor({
   category: Category;
   index: number;
 }) {
-  const { dispatch } = useGame();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -182,60 +164,27 @@ function CategoryEditor({
         </span>
 
         <div className="grid flex-1 gap-2 sm:grid-cols-2">
-          <Input
-            value={category.name}
-            placeholder="Category name"
-            onChange={(e) =>
-              dispatch({
-                type: "updateCategory",
-                id: category.id,
-                changes: { name: e.target.value },
-              })
-            }
-          />
+          <Input value={category.name} readOnly disabled />
 
-          <Input
-            value={category.hint}
-            placeholder="Hint shown during duel"
-            onChange={(e) =>
-              dispatch({
-                type: "updateCategory",
-                id: category.id,
-                changes: { hint: e.target.value },
-              })
-            }
-          />
+          <Input value={category.hint} readOnly disabled />
         </div>
 
         <Button
           variant="ghost"
           size="icon"
-          title={collapsed ? "Expand photos" : "Collapse photos"}
+          title={collapsed ? "Rozwiń zdjęcia" : "Zwiń zdjęcia"}
           onClick={() => setCollapsed((value) => !value)}
         >
           {collapsed ? "▸" : "▾"}
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() =>
-            dispatch({
-              type: "removeCategory",
-              id: category.id,
-            })
-          }
-        >
-          Delete
         </Button>
       </div>
 
       {collapsed ? (
         <div className="mt-2 pl-8 text-sm text-muted-foreground">
-          {category.name || "Unnamed category"}
+          {category.name || "Bez nazwy"}
           {category.hint ? ` — ${category.hint}` : ""}
           <span className="ml-2 opacity-60">
-            ({category.questions.length} photos)
+            ({category.questions.length} zdjęć)
           </span>
         </div>
       ) : (
@@ -246,78 +195,18 @@ function CategoryEditor({
 }
 
 function QuestionsEditor({ category }: { category: Category }) {
-  const { dispatch } = useGame();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
-
-  async function handleFiles(fileList: FileList | null) {
-    const files = Array.from(fileList ?? []).filter((f) =>
-      f.type.startsWith("image/"),
-    );
-
-    if (!files.length) return;
-
-    setUploading(true);
-
-    try {
-      const questions: Question[] = [];
-
-      for (const file of files) {
-        const imageId = newImageId();
-
-        await putImage(imageId, file);
-
-        questions.push(
-          createQuestion(imageId, file.name),
-        );
-      }
-
-      dispatch({
-        type: "addQuestions",
-        categoryId: category.id,
-        questions,
-      });
-    } finally {
-      setUploading(false);
-
-      if (inputRef.current) {
-        inputRef.current.value = "";
-      }
-    }
-  }
-
   return (
     <div className="mt-4 pl-0 sm:pl-8">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            Photo bank
+            Bank zdjęć
           </p>
 
           <p className="text-sm text-muted-foreground">
-            {category.questions.length} photo
-            {category.questions.length === 1 ? "" : "s"}
+            {category.questions.length}{" "}
+            {category.questions.length === 1 ? "zdjęcie" : "zdjęć"}
           </p>
-        </div>
-
-        <div>
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => void handleFiles(e.target.files)}
-          />
-
-          <Button
-            variant="secondary"
-            size="sm"
-            disabled={uploading}
-            onClick={() => inputRef.current?.click()}
-          >
-            {uploading ? "Adding…" : "+ Add photos"}
-          </Button>
         </div>
       </div>
 
@@ -327,7 +216,6 @@ function QuestionsEditor({ category }: { category: Category }) {
             {category.questions.map((question, index) => (
               <CompactQuestion
                 key={question.id}
-                categoryId={category.id}
                 question={question}
                 index={index}
               />
@@ -340,65 +228,26 @@ function QuestionsEditor({ category }: { category: Category }) {
 }
 
 function CompactQuestion({
-  categoryId,
   question,
   index,
 }: {
-  categoryId: string;
   question: Question;
   index: number;
 }) {
-  const { dispatch } = useGame();
-  const url = useImageUrl(question.imageId);
-
   return (
     <div className="group relative overflow-hidden rounded-md border border-border bg-secondary">
       <div className="aspect-square">
-        {url ? (
-          <img
-            src={url}
-            alt={question.answer || `Photo ${index + 1}`}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-            ?
-          </div>
-        )}
-      </div>
-
-      <div className="absolute inset-x-0 bottom-0 bg-background/90 p-1">
-        <Input
-          value={question.answer}
-          placeholder={`#${index + 1} answer`}
-          className="h-7 border-0 bg-transparent px-1 text-xs"
-          onChange={(e) =>
-            dispatch({
-              type: "updateQuestion",
-              categoryId,
-              questionId: question.id,
-              changes: { answer: e.target.value },
-            })
-          }
+        <img
+          src={question.imageId}
+          alt={question.answer || `Zdjęcie ${index + 1}`}
+          className="h-full w-full object-cover"
+          loading="lazy"
         />
       </div>
 
-      <button
-        type="button"
-        className="absolute right-1 top-1 hidden h-6 w-6 rounded-full bg-destructive text-xs text-destructive-foreground group-hover:block"
-        onClick={() => {
-          dispatch({
-            type: "removeQuestion",
-            categoryId,
-            questionId: question.id,
-          });
-
-          releaseImageUrl(question.imageId);
-          void deleteImage(question.imageId);
-        }}
-      >
-        ×
-      </button>
+      <div className="absolute inset-x-0 bottom-0 truncate bg-background/90 px-2 py-1 text-xs text-foreground">
+        {question.answer || `#${index + 1}`}
+      </div>
     </div>
   );
 }

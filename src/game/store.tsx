@@ -17,6 +17,8 @@ import {
   type Question,
 } from "./types";
 
+import { HARDCODED_CATEGORIES } from "./categoriesData";
+
 const STORAGE_KEY =
   "the-floor-setup-v1";
 
@@ -36,28 +38,6 @@ export const createPlayer = (
   eliminated: false,
 });
 
-export const createQuestion = (
-  imageId: string,
-  fileName?: string,
-): Question => ({
-  id: createId(),
-  imageId,
-  fileName,
-  answer: "",
-});
-
-export const createCategory = (
-  name = "",
-): Category => ({
-  id: createId(),
-  name,
-  hint: "",
-  questions: [],
-});
-
-export const newImageId = () =>
-  `img_${createId()}${createId()}`;
-
 const initialState: GameState = {
   phase: "setup",
 
@@ -66,7 +46,7 @@ const initialState: GameState = {
     createPlayer(),
   ],
 
-  categories: [],
+  categories: HARDCODED_CATEGORIES,
 
   consumedQuestionIds: [],
 
@@ -314,47 +294,6 @@ type Action =
       name: string;
     }
   | {
-      type: "addCategory";
-    }
-  | {
-      type: "removeCategory";
-      id: string;
-    }
-  | {
-      type: "updateCategory";
-      id: string;
-      changes: Partial<
-        Omit<
-          Category,
-          "id" | "questions"
-        >
-      >;
-    }
-  | {
-      type: "addQuestions";
-      categoryId: string;
-      questions: Question[];
-    }
-  | {
-      type: "removeQuestion";
-      categoryId: string;
-      questionId: string;
-    }
-  | {
-      type: "updateQuestion";
-      categoryId: string;
-      questionId: string;
-      changes: Partial<
-        Omit<Question, "id">
-      >;
-    }
-  | {
-      type: "moveQuestion";
-      categoryId: string;
-      questionId: string;
-      direction: -1 | 1;
-    }
-  | {
       type: "setPhase";
       phase: GamePhase;
     }
@@ -393,26 +332,6 @@ type Action =
       type: "hydrate";
       state: GameState;
     };
-
-function mapCategory(
-  state: GameState,
-  id: string,
-  fn: (
-    c: Category,
-  ) => Category,
-): GameState {
-  return {
-    ...state,
-
-    categories:
-      state.categories.map(
-        (c) =>
-          c.id === id
-            ? fn(c)
-            : c,
-      ),
-  };
-}
 
 export function reducer(
   state: GameState,
@@ -470,140 +389,6 @@ export function reducer(
                 : p,
           ),
       };
-
-    case "addCategory":
-      return {
-        ...state,
-
-        categories: [
-          ...state.categories,
-          createCategory(),
-        ],
-      };
-
-    case "removeCategory":
-      return {
-        ...state,
-
-        categories:
-          state.categories.filter(
-            (c) =>
-              c.id !==
-              action.id,
-          ),
-      };
-
-    case "updateCategory":
-      return mapCategory(
-        state,
-        action.id,
-        (c) => ({
-          ...c,
-          ...action.changes,
-        }),
-      );
-
-    case "addQuestions":
-      return mapCategory(
-        state,
-        action.categoryId,
-        (c) => ({
-          ...c,
-
-          questions: [
-            ...c.questions,
-            ...action.questions,
-          ],
-        }),
-      );
-
-    case "removeQuestion":
-      return mapCategory(
-        state,
-        action.categoryId,
-        (c) => ({
-          ...c,
-
-          questions:
-            c.questions.filter(
-              (q) =>
-                q.id !==
-                action.questionId,
-            ),
-        }),
-      );
-
-    case "updateQuestion":
-      return mapCategory(
-        state,
-        action.categoryId,
-        (c) => ({
-          ...c,
-
-          questions:
-            c.questions.map(
-              (q) =>
-                q.id ===
-                action.questionId
-                  ? {
-                      ...q,
-                      ...action.changes,
-                    }
-                  : q,
-            ),
-        }),
-      );
-
-    case "moveQuestion":
-      return mapCategory(
-        state,
-        action.categoryId,
-        (c) => {
-          const index =
-            c.questions.findIndex(
-              (q) =>
-                q.id ===
-                action.questionId,
-            );
-
-          const target =
-            index +
-            action.direction;
-
-          if (
-            index === -1 ||
-            target < 0 ||
-            target >=
-              c.questions.length
-          ) {
-            return c;
-          }
-
-          const questions =
-            [...c.questions];
-
-          const moved =
-            questions.splice(
-              index,
-              1,
-            )[0];
-
-          if (!moved) {
-            return c;
-          }
-
-          questions.splice(
-            target,
-            0,
-            moved,
-          );
-
-          return {
-            ...c,
-            questions,
-          };
-        },
-      );
 
     case "setPhase":
       return {
@@ -841,9 +626,6 @@ export function GameProvider({
         if (
           Array.isArray(
             parsed.players,
-          ) &&
-          Array.isArray(
-            parsed.categories,
           )
         ) {
           dispatch({
@@ -853,9 +635,6 @@ export function GameProvider({
 
               players:
                 parsed.players,
-
-              categories:
-                parsed.categories,
             },
           });
         }
@@ -878,9 +657,6 @@ export function GameProvider({
         JSON.stringify({
           players:
             state.players,
-
-          categories:
-            state.categories,
         }),
       );
     } catch {
@@ -889,7 +665,6 @@ export function GameProvider({
   }, [
     hydrated,
     state.players,
-    state.categories,
   ]);
 
   const value =

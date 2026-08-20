@@ -60,4 +60,4 @@ export interface GameState {
   winnerId: string | null;
 }
 
-export const DEFAULT_DUEL_TIME = 4;
+export const DEFAULT_DUEL_TIME = 30;

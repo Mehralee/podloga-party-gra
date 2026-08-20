@@ -31,10 +31,10 @@ function NextDuelPage() {
 
   if (!duel) {
     return (
-      <Stage title="Next Duel" subtitle="No duel is queued.">
+      <Stage title="Następny pojedynek" subtitle="Brak zaplanowanego pojedynku.">
         <div className="panel-glass mx-auto max-w-2xl p-10 text-center">
           <Button size="lg" onClick={() => navigate({ to: "/" })}>
-            Back to setup
+            Wróć do ustawień
           </Button>
         </div>
       </Stage>
@@ -44,29 +44,29 @@ function NextDuelPage() {
   return (
     <Stage
       eyebrow="THE FLOOR"
-      title="Next Duel"
-      subtitle={`${survivingPlayers.length} players still standing`}
+      title="Następny pojedynek"
+      subtitle={`${survivingPlayers.length} graczy w grze`}
       actions={
         <Button
           size="lg"
           className="anim-rise delay-3 px-12 py-7 text-xl tracking-[0.3em]"
           onClick={() => navigate({ to: "/game" })}
         >
-          START DUEL
+          ROZPOCZNIJ POJEDYNEK
         </Button>
       }
     >
       <div className="mx-auto w-full max-w-[1500px]">
         <div className="grid items-center gap-6 lg:grid-cols-[1fr_auto_1fr]">
-          <ContenderCard name={nameOf(duel.challengerId)} label="FIRST ON THE CLOCK" delay="" />
+          <ContenderCard name={nameOf(duel.challengerId)} label="PIERWSZY NA ZEGARZE" delay="" />
           <p className="text-gold-shine stage-title anim-slam delay-2 text-center text-[clamp(2rem,4vw,4rem)]">
             VS
           </p>
-          <ContenderCard name={nameOf(duel.defenderId)} label="SECOND" delay="delay-1" />
+          <ContenderCard name={nameOf(duel.defenderId)} label="DRUGI" delay="delay-1" />
         </div>
 
         <div className="panel-glass anim-rise delay-3 mx-auto mt-10 max-w-4xl px-10 py-8 text-center">
-          <p className="eyebrow">CATEGORY</p>
+          <p className="eyebrow">KATEGORIA</p>
           <p className="text-gold-shine stage-title mt-2 text-[clamp(1.8rem,3.4vw,3.4rem)]">
             {category?.name || "—"}
           </p>
@@ -76,7 +76,7 @@ function NextDuelPage() {
             </p>
           ) : null}
           <p className="mt-6 text-sm tracking-[0.4em] text-muted-foreground">
-            {DEFAULT_DUEL_TIME} SECONDS EACH
+            {DEFAULT_DUEL_TIME} SEKUND NA GRACZA
           </p>
         </div>
       </div>

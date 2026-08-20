@@ -16,7 +16,6 @@ import {
 } from "@/game/store";
 
 import { Button } from "@/components/ui/button";
-import { useImageUrl } from "@/game/useImageUrl";
 import { DEFAULT_DUEL_TIME } from "@/game/types";
 
 export const Route = createFileRoute(
@@ -194,9 +193,8 @@ function GamePage() {
     );
 
   const imageUrl =
-    useImageUrl(
-      question?.imageId,
-    );
+    question?.imageId ??
+    null;
 
   /*
    * =====================================================
@@ -275,7 +273,7 @@ function GamePage() {
 
       setWinnerName(
         winner?.name ??
-          "WINNER",
+          "ZWYCIĘZCA",
       );
 
       /*
@@ -628,8 +626,8 @@ function GamePage() {
 
           <p className="mt-6 font-display text-2xl uppercase tracking-[0.5em] text-primary">
             {isFinal
-              ? "TOURNAMENT CHAMPION"
-              : "DUEL WINNER"}
+              ? "MISTRZ TURNIEJU"
+              : "ZWYCIĘZCA POJEDYNKU"}
           </p>
 
           <h1
@@ -639,7 +637,7 @@ function GamePage() {
                 : "anim-rise"
             }`}
           >
-            WINNER
+            ZWYCIĘZCA
           </h1>
 
           <h2
@@ -665,7 +663,7 @@ function GamePage() {
               </div>
 
               <p className="mt-6 text-lg uppercase tracking-[0.35em] text-muted-foreground">
-                CHAMPION OF THE FLOOR
+                MISTRZ THE FLOOR
               </p>
 
               <div className="mt-12 flex flex-wrap justify-center gap-4">
@@ -677,7 +675,7 @@ function GamePage() {
                     })
                   }
                 >
-                  BACK TO HOME
+                  WRÓĆ DO STARTU
                 </Button>
 
                 <Button
@@ -701,7 +699,7 @@ function GamePage() {
                     });
                   }}
                 >
-                  RESET TOURNAMENT
+                  RESETUJ TURNIEJ
                 </Button>
               </div>
             </>
@@ -715,7 +713,7 @@ function GamePage() {
                 })
               }
             >
-              CONTINUE TOURNAMENT
+              KONTYNUUJ TURNIEJ
             </Button>
           )}
         </div>
@@ -766,12 +764,12 @@ function GamePage() {
           </p>
 
           <h1 className="text-gold-shine stage-title mt-3 text-5xl">
-            Starting duel...
+            Rozpoczynanie pojedynku...
           </h1>
 
           <p className="mt-4 text-muted-foreground">
-            Preparing the players and
-            first question.
+            Przygotowywanie graczy i
+            pierwszego pytania.
           </p>
 
           <Button
@@ -783,7 +781,7 @@ function GamePage() {
               })
             }
           >
-            Back to tournament
+            Wróć do turnieju
           </Button>
         </div>
       </div>
@@ -810,12 +808,12 @@ function GamePage() {
 
       <header className="anim-drop relative z-10 px-8 pt-5 text-center">
         <p className="eyebrow">
-          CATEGORY
+          KATEGORIA
         </p>
 
         <h1 className="text-gold-shine stage-title mt-1 text-[clamp(1.6rem,3vw,3.2rem)]">
           {category.name ||
-            "Category"}
+            "Kategoria"}
         </h1>
 
         {category.hint ? (
@@ -827,7 +825,7 @@ function GamePage() {
         <div className="gold-rule mx-auto mt-3 w-2/3 max-w-4xl" />
       </header>
 
-      <main className="relative z-10 grid flex-1 items-center gap-6 overflow-hidden px-8 py-4 lg:grid-cols-[minmax(0,17rem)_1fr_minmax(0,17rem)]">
+      <main className="relative z-10 grid min-h-0 flex-1 grid-rows-[1fr] items-stretch gap-6 overflow-hidden px-8 py-4 lg:grid-cols-[minmax(0,17rem)_1fr_minmax(0,17rem)]">
         <PlayerPodium
           playerId={
             duel.challengerId
@@ -836,7 +834,7 @@ function GamePage() {
 
         <section className="flex h-full flex-col items-center justify-center gap-4">
           <div
-            className={`panel-glass gold-frame flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden p-4 transition-all duration-500 ${
+            className={`panel-glass gold-frame flex aspect-[612/431] max-h-full max-w-full min-h-0 w-full items-center justify-center overflow-hidden p-4 transition-all duration-500 ${
               transition === "pass"
                 ? "scale-95 opacity-0"
                 : transition ===
@@ -851,12 +849,12 @@ function GamePage() {
                   question?.id
                 }
                 src={imageUrl}
-                alt={`Photo question in category ${category.name}`}
-                className="anim-rise max-h-full w-auto max-w-full rounded-md object-contain"
+                alt={`Zdjęcie z kategorii ${category.name}`}
+                className="anim-rise h-full w-full rounded-md object-contain"
               />
             ) : (
               <p className="text-muted-foreground">
-                Photo unavailable
+                Zdjęcie niedostępne
               </p>
             )}
           </div>
@@ -966,7 +964,7 @@ function PlayerPodium({
 
   return (
     <section
-      className={`panel-glass player-podium px-5 py-8 text-center ${
+      className={`panel-glass player-podium flex h-full max-h-full flex-col items-center justify-center overflow-hidden px-5 py-8 text-center ${
         active
           ? "podium-active"
           : "podium-idle"
