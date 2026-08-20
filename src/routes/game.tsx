@@ -654,11 +654,9 @@ function GamePage() {
             <>
               <div className="mt-10 flex items-center justify-center gap-4">
                 <div className="h-px w-20 bg-primary/50" />
-
                 <span className="text-3xl text-primary">
                   ★
                 </span>
-
                 <div className="h-px w-20 bg-primary/50" />
               </div>
 
@@ -806,35 +804,39 @@ function GamePage() {
         aria-hidden
       />
 
-      <header className="anim-drop relative z-10 px-8 pt-5 text-center">
-        <p className="eyebrow">
+      {/* COMPACT CATEGORY HEADER */}
+      <header className="anim-drop relative z-10 px-6 pt-2 text-center">
+        <p className="eyebrow text-xs">
           KATEGORIA
         </p>
 
-        <h1 className="text-gold-shine stage-title mt-1 text-[clamp(1.6rem,3vw,3.2rem)]">
+        <h1 className="text-gold-shine stage-title mt-0.5 text-[clamp(1.25rem,2.2vw,2.3rem)]">
           {category.name ||
             "Kategoria"}
         </h1>
 
         {category.hint ? (
-          <p className="mt-1 text-[clamp(0.95rem,1.3vw,1.4rem)] text-muted-foreground">
+          <p className="mt-0.5 text-[clamp(0.75rem,1vw,1rem)] text-muted-foreground">
             {category.hint}
           </p>
         ) : null}
 
-        <div className="gold-rule mx-auto mt-3 w-2/3 max-w-4xl" />
+        <div className="gold-rule mx-auto mt-1.5 w-1/2 max-w-2xl" />
       </header>
 
-      <main className="relative z-10 grid min-h-0 flex-1 grid-rows-[1fr] items-stretch gap-6 overflow-hidden px-8 py-4 lg:grid-cols-[minmax(0,17rem)_1fr_minmax(0,17rem)]">
+      {/* MAIN DUEL AREA */}
+      <main className="relative z-10 grid min-h-0 flex-1 grid-rows-[1fr] items-center gap-4 overflow-hidden px-5 py-2 lg:grid-cols-[minmax(0,13rem)_1fr_minmax(0,13rem)]">
+        {/* LEFT PLAYER */}
         <PlayerPodium
           playerId={
             duel.challengerId
           }
         />
 
-        <section className="flex h-full flex-col items-center justify-center gap-4">
+        {/* CENTER IMAGE + ANSWER */}
+        <section className="flex h-full min-h-0 flex-col items-center justify-center gap-2">
           <div
-            className={`panel-glass gold-frame flex aspect-[612/431] max-h-full max-w-full min-h-0 w-full items-center justify-center overflow-hidden p-4 transition-all duration-500 ${
+            className={`panel-glass gold-frame flex aspect-[612/431] max-h-[calc(100%-3.5rem)] max-w-full min-h-0 w-full items-center justify-center overflow-hidden p-3 transition-all duration-500 ${
               transition === "pass"
                 ? "scale-95 opacity-0"
                 : transition ===
@@ -859,20 +861,22 @@ function GamePage() {
             )}
           </div>
 
-          <div className="flex min-h-[4.5rem] items-center justify-center">
+          {/* SMALLER ANSWER */}
+          <div className="flex min-h-[3rem] items-center justify-center">
             {state.revealed ? (
-              <p className="text-gold-shine stage-title anim-slam text-[clamp(2rem,4vw,4rem)]">
+              <p className="text-gold-shine stage-title anim-slam text-[clamp(1.3rem,2.4vw,2.5rem)]">
                 {question?.answer ||
                   "—"}
               </p>
             ) : (
-              <p className="text-[clamp(1.5rem,3vw,3rem)] tracking-[0.5em] text-muted-foreground/60">
+              <p className="text-[clamp(1rem,2vw,2rem)] tracking-[0.5em] text-muted-foreground/60">
                 • • • • •
               </p>
             )}
           </div>
         </section>
 
+        {/* RIGHT PLAYER */}
         <PlayerPodium
           playerId={
             duel.defenderId
@@ -880,7 +884,7 @@ function GamePage() {
         />
       </main>
 
-      <footer className="host-bar relative z-10 flex items-center justify-center gap-2 px-8 pb-4 pt-3 opacity-70 transition-opacity duration-300 hover:opacity-100">
+      <footer className="host-bar relative z-10 flex items-center justify-center gap-2 px-8 pb-3 pt-2 opacity-70 transition-opacity duration-300 hover:opacity-100">
         <Button
           variant="ghost"
           size="sm"
@@ -964,7 +968,7 @@ function PlayerPodium({
 
   return (
     <section
-      className={`panel-glass player-podium flex h-full max-h-full flex-col items-center justify-center overflow-hidden px-5 py-8 text-center ${
+      className={`panel-glass player-podium flex h-fit max-h-full min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-4 text-center ${
         active
           ? "podium-active"
           : "podium-idle"
@@ -975,13 +979,15 @@ function PlayerPodium({
           : undefined
       }
     >
-      <p className="stage-title text-[clamp(1.2rem,1.9vw,2.1rem)]">
+      {/* PLAYER NAME */}
+      <p className="stage-title text-[clamp(0.9rem,1.35vw,1.5rem)]">
         {player?.name ||
           "—"}
       </p>
 
+      {/* SMALLER TIMER */}
       <p
-        className={`timer-digits mt-5 text-[clamp(3rem,6vw,6rem)] ${
+        className={`timer-digits mt-2 text-[clamp(1.6rem,3vw,3rem)] ${
           low
             ? "timer-danger text-destructive"
             : active
@@ -992,7 +998,7 @@ function PlayerPodium({
         {seconds.toFixed(1)}
       </p>
 
-      <p className="mt-4 text-[0.7rem] tracking-[0.4em] text-muted-foreground">
+      <p className="mt-1 text-[0.55rem] tracking-[0.3em] text-muted-foreground">
         {active
           ? "ON THE CLOCK"
           : "FROZEN"}
