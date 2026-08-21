@@ -46,23 +46,20 @@ type BracketMatch = {
 };
 
 function TournamentPage() {
-  const { state, dispatch } = useGame();
+  const { state } = useGame();
   const navigate = useNavigate();
 
   const players = useMemo(
     () =>
       state.players.filter(
         (p) =>
-          p.name.trim()
-            .length > 0,
+          p.name.trim().length > 0,
       ),
     [state.players],
   );
 
   const [matches, setMatches] =
-    useState<BracketMatch[]>(
-      [],
-    );
+    useState<BracketMatch[]>([]);
 
   const [drawing, setDrawing] =
     useState(false);
@@ -105,13 +102,13 @@ function TournamentPage() {
       return;
     }
 
-    let saved =
-      parsed;
+    let saved = parsed;
 
     /*
      * Check for a result from the exact
      * match just played.
      */
+
     const activeRaw =
       sessionStorage.getItem(
         ACTIVE_MATCH_KEY,
@@ -149,25 +146,26 @@ function TournamentPage() {
        * Only consume a result belonging to
        * the currently active match.
        */
+
       if (
         matchId &&
-        result?.matchId ===
-          matchId &&
+        result?.matchId === matchId &&
         winnerId
       ) {
         const playedMatch =
           saved.find(
             (match) =>
-              match.id ===
-              matchId,
+              match.id === matchId,
           );
 
         if (
           playedMatch &&
-          (winnerId ===
-            playedMatch.player1Id ||
+          (
             winnerId ===
-              playedMatch.player2Id)
+              playedMatch.player1Id ||
+            winnerId ===
+              playedMatch.player2Id
+          )
         ) {
           saved =
             saved.map(
@@ -199,10 +197,6 @@ function TournamentPage() {
             saved,
           );
 
-          /*
-           * Only NOW is it safe to delete
-           * the temporary result.
-           */
           sessionStorage.removeItem(
             ACTIVE_MATCH_KEY,
           );
@@ -215,6 +209,7 @@ function TournamentPage() {
     }
 
     setMatches(saved);
+
     setDrawComplete(
       true,
     );
@@ -265,14 +260,26 @@ function TournamentPage() {
     );
 
     setDrawing(true);
+
     setDrawComplete(
       false,
     );
+
     setMatches([]);
+
+    /*
+     * Shuffle players once.
+     *
+     * Because the players are shuffled before the
+     * bracket is created, any automatic bye will
+     * effectively be random.
+     */
 
     const shuffled =
       [...players].sort(
-        () => Math.random() - 0.5,
+        () =>
+          Math.random() -
+          0.5,
       );
 
     let index = 0;
@@ -293,7 +300,7 @@ function TournamentPage() {
                 0,
                 Math.min(
                   players.length,
-                  8,
+                  10,
                 ),
               )
               .map(
@@ -360,89 +367,87 @@ function TournamentPage() {
    * =====================================================
    */
 
-function startMatch(
-  match: BracketMatch,
-) {
-  if (
-    match.status !==
-    "ready"
+  function startMatch(
+    match: BracketMatch,
   ) {
-    return;
-  }
+    if (
+      match.status !==
+      "ready"
+    ) {
+      return;
+    }
 
-  if (
-    !match.player1Id ||
-    !match.player2Id
-  ) {
-    return;
-  }
+    if (
+      !match.player1Id ||
+      !match.player2Id
+    ) {
+      return;
+    }
 
-  /*
-   * Clear ONLY the old result.
-   */
-  sessionStorage.removeItem(
-    RESULT_KEY,
-  );
+    /*
+     * Clear ONLY the old result.
+     */
 
-  /*
-   * Save exact match information.
-   *
-   * The category selection page
-   * will read this.
-   */
-  sessionStorage.setItem(
-    ACTIVE_MATCH_KEY,
-    JSON.stringify({
-      matchId:
-        match.id,
-      player1Id:
-        match.player1Id,
-      player2Id:
-        match.player2Id,
-    }),
-  );
+    sessionStorage.removeItem(
+      RESULT_KEY,
+    );
 
-  /*
-   * Mark the match as playing.
-   *
-   * This means the match is currently
-   * being prepared, not that the actual
-   * duel has started.
-   */
-  setMatches(
-    (current) => {
-      const updated =
-        current.map(
-          (
-            m,
-          ): BracketMatch =>
-            m.id ===
-            match.id
-              ? {
-                  ...m,
-                  status:
-                    "playing",
-                }
-              : m,
+    /*
+     * Save exact match information.
+     */
+
+    sessionStorage.setItem(
+      ACTIVE_MATCH_KEY,
+      JSON.stringify({
+        matchId:
+          match.id,
+
+        player1Id:
+          match.player1Id,
+
+        player2Id:
+          match.player2Id,
+      }),
+    );
+
+    /*
+     * Mark match as playing.
+     */
+
+    setMatches(
+      (current) => {
+        const updated =
+          current.map(
+            (
+              m,
+            ): BracketMatch =>
+              m.id ===
+              match.id
+                ? {
+                    ...m,
+                    status:
+                      "playing",
+                  }
+                : m,
+          );
+
+        saveBracket(
+          updated,
         );
 
-      saveBracket(
-        updated,
-      );
+        return updated;
+      },
+    );
 
-      return updated;
-    },
-  );
+    /*
+     * Go to category selection.
+     */
 
-  /*
-   * Go to category selection.
-   *
-   * DO NOT dispatch startGame here.
-   */
-  navigate({
-    to: "/category",
-  });
-}
+    navigate({
+      to: "/category",
+    });
+  }
+
   function removeMatch(
     matchId: string,
   ) {
@@ -493,10 +498,13 @@ function startMatch(
     );
 
     setMatches([]);
+
     setDrawComplete(
       false,
     );
+
     setDrawing(false);
+
     setDrawnNames([]);
 
     navigate({
@@ -525,6 +533,12 @@ function startMatch(
     );
   }
 
+  /*
+   * =====================================================
+   * ROUND INFORMATION
+   * =====================================================
+   */
+
   const rounds = [
     ...new Set(
       matches.map(
@@ -533,8 +547,69 @@ function startMatch(
       ),
     ),
   ].sort(
-    (a, b) => a - b,
+    (a, b) =>
+      a - b,
   );
+
+  /*
+   * =====================================================
+   * RESPONSIVE BRACKET SCALE
+   * =====================================================
+   *
+   * The frame remains fixed.
+   *
+   * More players = smaller cards/gaps.
+   */
+
+  const playerCount =
+    players.length;
+
+  const bracketScale =
+    playerCount <= 8
+      ? {
+          card: "w-[250px]",
+          column: "min-w-[250px]",
+          gap: "gap-6",
+          columnsGap: "gap-10",
+          padding: "px-8",
+          player: "px-3 py-2 text-sm",
+          cardPadding: "p-3",
+          title: "text-xl",
+        }
+      : playerCount <= 10
+        ? {
+            card: "w-[205px]",
+            column: "min-w-[205px]",
+            gap: "gap-4",
+            columnsGap: "gap-6",
+            padding: "px-5",
+            player: "px-2 py-1.5 text-xs",
+            cardPadding: "p-2",
+            title: "text-lg",
+          }
+        : playerCount <= 12
+          ? {
+              card: "w-[185px]",
+              column: "min-w-[185px]",
+              gap: "gap-3",
+              columnsGap: "gap-5",
+              padding: "px-4",
+              player:
+                "px-2 py-1 text-[11px]",
+              cardPadding: "p-2",
+              title: "text-base",
+            }
+          : {
+              card: "w-[165px]",
+              column: "min-w-[165px]",
+              gap: "gap-2",
+              columnsGap: "gap-4",
+              padding: "px-3",
+              player:
+                "px-1.5 py-1 text-[10px]",
+              cardPadding: "p-1.5",
+              title: "text-sm",
+            };
 
   /*
    * =====================================================
@@ -625,71 +700,93 @@ function startMatch(
             </div>
           </div>
         ) : (
-          <div className="h-full overflow-x-auto overflow-y-hidden pb-4">
-            <div className="flex h-full min-w-max items-center gap-10 px-8">
-              {rounds.map(
-                (round) => {
-                  const roundMatches =
-                    matches.filter(
-                      (m) =>
-                        m.round ===
-                        round,
-                    );
+          /*
+           * =================================================
+           * FIXED BRACKET FRAME
+           * =================================================
+           *
+           * The frame itself never grows vertically.
+           *
+           * Horizontal scrolling is allowed inside the
+           * frame if the screen is genuinely too narrow.
+           */
 
-                  const isFinal =
-                    round ===
-                    rounds[
-                      rounds.length -
-                        1
-                    ];
+          <div className="relative h-full w-full overflow-hidden">
+            <div className="absolute inset-0 overflow-x-auto overflow-y-auto">
+              <div
+                className={`mx-auto flex min-h-full w-fit items-center ${bracketScale.columnsGap} ${bracketScale.padding} py-6`}
+              >
+                {rounds.map(
+                  (round) => {
+                    const roundMatches =
+                      matches.filter(
+                        (m) =>
+                          m.round ===
+                          round,
+                      );
 
-                  return (
-                    <div
-                      key={round}
-                      className="flex h-full min-w-[250px] flex-col justify-center"
-                    >
-                      <p className="mb-5 text-center font-display text-xl uppercase text-primary">
-                        {isFinal
-                          ? "FINAŁ"
-                          : `RUNDA ${round}`}
-                      </p>
+                    const isFinal =
+                      round ===
+                      rounds[
+                        rounds.length -
+                          1
+                      ];
 
-                      <div className="flex flex-col justify-center gap-6">
-                        {roundMatches.map(
-                          (
-                            match,
-                          ) => (
-                            <BracketCard
-                              key={
-                                match.id
-                              }
-                              match={
-                                match
-                              }
-                              allMatches={
-                                matches
-                              }
-                              playerName={
-                                playerName
-                              }
-                              onStart={() =>
-                                startMatch(
-                                  match,
-                                )
-                              }
-                              onRemove={() =>
-                                removeMatch(
-                                  match.id,
-                                )
-                              }
-                            />
-                          ),
-                        )}
+                    return (
+                      <div
+                        key={round}
+                        className={`flex min-h-[85%] flex-col justify-center ${bracketScale.column}`}
+                      >
+                        <p
+                          className={`mb-4 text-center font-display uppercase text-primary ${bracketScale.title}`}
+                        >
+                          {isFinal
+                            ? "FINAŁ"
+                            : `RUNDA ${round}`}
+                        </p>
+
+                        <div
+                          className={`flex flex-col justify-center ${bracketScale.gap}`}
+                        >
+                          {roundMatches.map(
+                            (
+                              match,
+                            ) => (
+                              <BracketCard
+                                key={
+                                  match.id
+                                }
+                                match={
+                                  match
+                                }
+                                allMatches={
+                                  matches
+                                }
+                                playerName={
+                                  playerName
+                                }
+                                onStart={() =>
+                                  startMatch(
+                                    match,
+                                  )
+                                }
+                                onRemove={() =>
+                                  removeMatch(
+                                    match.id,
+                                  )
+                                }
+                                scale={
+                                  bracketScale
+                                }
+                              />
+                            ),
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                },
-              )}
+                    );
+                  },
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -708,14 +805,30 @@ function BracketCard({
   playerName,
   onStart,
   onRemove,
+  scale,
 }: {
   match: BracketMatch;
+
   allMatches: BracketMatch[];
+
   playerName: (
     id: string | null,
   ) => string;
+
   onStart: () => void;
+
   onRemove: () => void;
+
+  scale: {
+    card: string;
+    column: string;
+    gap: string;
+    columnsGap: string;
+    padding: string;
+    player: string;
+    cardPadding: string;
+    title: string;
+  };
 }) {
   const canStart =
     match.status ===
@@ -746,10 +859,14 @@ function BracketCard({
     match.player2Id;
 
   return (
-    <div className="panel relative w-[250px] p-3">
+    <div
+      className={`panel relative ${scale.card} ${scale.cardPadding}`}
+    >
       <div className="space-y-1">
         <div
-          className={`rounded px-3 py-2 ${
+          className={`truncate rounded ${
+            scale.player
+          } ${
             player1Won ||
             player1Advanced
               ? "bg-primary/20 text-primary"
@@ -761,12 +878,14 @@ function BracketCard({
           )}
         </div>
 
-        <div className="text-center text-xs text-muted-foreground">
+        <div className="text-center text-[9px] text-muted-foreground">
           VS
         </div>
 
         <div
-          className={`rounded px-3 py-2 ${
+          className={`truncate rounded ${
+            scale.player
+          } ${
             player2Won ||
             player2Advanced
               ? "bg-primary/20 text-primary"
@@ -779,12 +898,14 @@ function BracketCard({
         </div>
       </div>
 
-      <div className="mt-3 flex gap-2">
+      <div className="mt-2 flex gap-1">
         {canStart && (
           <Button
-            className="flex-1"
+            className="min-w-0 flex-1 px-1 text-[10px]"
             size="sm"
-            onClick={onStart}
+            onClick={
+              onStart
+            }
           >
             ROZPOCZNIJ
           </Button>
@@ -792,14 +913,14 @@ function BracketCard({
 
         {match.status ===
           "playing" && (
-          <div className="flex flex-1 items-center justify-center rounded bg-primary/10 px-2 py-2 text-xs uppercase text-primary">
+          <div className="flex min-w-0 flex-1 items-center justify-center rounded bg-primary/10 px-1 py-1.5 text-[9px] uppercase text-primary">
             W TRAKCIE
           </div>
         )}
 
         {match.status ===
           "finished" && (
-          <div className="flex flex-1 items-center justify-center rounded bg-primary/10 px-2 py-2 text-xs uppercase text-primary">
+          <div className="flex min-w-0 flex-1 items-center justify-center rounded bg-primary/10 px-1 py-1.5 text-[9px] uppercase text-primary">
             ZAKOŃCZONE
           </div>
         )}
@@ -809,6 +930,7 @@ function BracketCard({
           <Button
             variant="ghost"
             size="sm"
+            className="h-8 w-7 shrink-0 px-0"
             onClick={
               onRemove
             }
@@ -873,33 +995,55 @@ function isAdvancingPlayer(
    CREATE BRACKET
    ========================================================= */
 
+/**
+ * Creates a single-elimination bracket without forcing
+ * the player count to a power of two.
+ *
+ * Examples:
+ *
+ * 8 players:
+ *   8 → 4 → 2 → 1
+ *
+ * 10 players:
+ *   10 → 5 → 3 → 2 → 1
+ *
+ * 12 players:
+ *   12 → 6 → 3 → 2 → 1
+ *
+ * 14 players:
+ *   14 → 7 → 4 → 2 → 1
+ *
+ * 16 players:
+ *   16 → 8 → 4 → 2 → 1
+ *
+ * When a round has an odd number of competitors,
+ * the final unmatched position becomes an automatic BYE.
+ *
+ * Because players are shuffled before this function is
+ * called, the player receiving the bye is effectively random.
+ */
+
 function createBracket(
   playerIds: string[],
 ): BracketMatch[] {
   const matches: BracketMatch[] =
     [];
 
-  let size = 1;
-
-  while (
-    size < playerIds.length
-  ) {
-    size *= 2;
-  }
-
-  const slots: (
-    | string
-    | null
-  )[] = [...playerIds];
-
-  while (
-    slots.length < size
-  ) {
-    slots.push(null);
-  }
+  /*
+   * FIRST ROUND
+   *
+   * Every two actual players make one real match.
+   *
+   * IMPORTANT:
+   * We do NOT round the player count up to 8/16/etc.
+   *
+   * 10 players therefore creates exactly 5 matches.
+   */
 
   const firstRoundCount =
-    size / 2;
+    Math.ceil(
+      playerIds.length / 2,
+    );
 
   for (
     let i = 0;
@@ -907,10 +1051,19 @@ function createBracket(
     i++
   ) {
     const player1 =
-      slots[i * 2] ?? null;
+      playerIds[i * 2] ??
+      null;
 
     const player2 =
-      slots[i * 2 + 1] ?? null;
+      playerIds[i * 2 + 1] ??
+      null;
+
+    /*
+     * A bye can occur here only when there is an odd
+     * number of players, e.g. 9 players.
+     *
+     * With 10 players there are exactly 5 real matches.
+     */
 
     const isBye =
       !!player1 &&
@@ -918,7 +1071,9 @@ function createBracket(
 
     matches.push({
       id: `r1-${i}`,
+
       round: 1,
+
       position: i,
 
       player1Id:
@@ -939,6 +1094,18 @@ function createBracket(
     });
   }
 
+  /*
+   * SUBSEQUENT ROUNDS
+   *
+   * Do NOT require the number of matches to be even.
+   *
+   * ceil(previousCount / 2) means:
+   *
+   * 5 → 3
+   * 3 → 2
+   * 2 → 1
+   */
+
   let previousCount =
     firstRoundCount;
 
@@ -948,7 +1115,9 @@ function createBracket(
     previousCount > 1
   ) {
     const count =
-      previousCount / 2;
+      Math.ceil(
+        previousCount / 2,
+      );
 
     for (
       let i = 0;
@@ -962,17 +1131,22 @@ function createBracket(
 
         position: i,
 
-        player1Id: null,
+        player1Id:
+          null,
 
-        player2Id: null,
+        player2Id:
+          null,
 
-        winnerId: null,
+        winnerId:
+          null,
 
-        status: "ready",
+        status:
+          "ready",
       });
     }
 
-    previousCount = count;
+    previousCount =
+      count;
 
     round++;
   }
@@ -1004,12 +1178,25 @@ function resolveBracket(
       ),
     ),
   ].sort(
-    (a, b) => a - b,
+    (a, b) =>
+      a - b,
   );
 
   /*
    * Keep propagating until no slot changes.
+   *
+   * This also handles odd-sized rounds:
+   *
+   * 5 winners:
+   *   match 1 vs 2
+   *   match 3 vs 4
+   *   match 5 gets BYE
+   *
+   * 3 winners:
+   *   match 1 vs 2
+   *   match 3 gets BYE
    */
+
   let changed = true;
 
   while (changed) {
@@ -1044,9 +1231,10 @@ function resolveBracket(
         );
 
       /*
-       * Put finished/bye winners into the
-       * exact next-round slot.
+       * Put finished/bye winners into
+       * the appropriate next-round slot.
        */
+
       for (
         const current of
           currentMatches
@@ -1078,6 +1266,7 @@ function resolveBracket(
          * Don't modify active or completed
          * next-round games.
          */
+
         if (
           nextMatch.status ===
             "playing" ||
@@ -1115,8 +1304,9 @@ function resolveBracket(
       }
 
       /*
-       * Determine readiness.
+       * Determine readiness / BYEs.
        */
+
       for (
         const nextMatch of
           nextMatches
@@ -1131,7 +1321,8 @@ function resolveBracket(
         }
 
         const feederPosition =
-          nextMatch.position * 2;
+          nextMatch.position *
+          2;
 
         const feeder1 =
           currentMatches.find(
@@ -1148,11 +1339,17 @@ function resolveBracket(
           );
 
         /*
-         * IMPORTANT:
+         * A missing feeder is considered already
+         * resolved.
          *
-         * Missing winner means that feeder
-         * has NOT resolved yet.
+         * This is what allows:
+         *
+         * 5 → 3
+         * 3 → 2
+         *
+         * without creating fake matches.
          */
+
         const feeder1Resolved =
           !feeder1 ||
           !!feeder1.winnerId;
@@ -1162,16 +1359,13 @@ function resolveBracket(
           !!feeder2.winnerId;
 
         /*
-         * Still waiting for a feeder.
+         * Still waiting for a previous match.
          */
+
         if (
           !feeder1Resolved ||
           !feeder2Resolved
         ) {
-          /*
-           * Keep any winner from becoming a
-           * fake BYE winner.
-           */
           if (
             nextMatch.winnerId !==
             null
@@ -1203,15 +1397,14 @@ function resolveBracket(
 
         /*
          * Both actual players are available.
+         *
+         * This is a real match.
          */
+
         if (
           hasPlayer1 &&
           hasPlayer2
         ) {
-          /*
-           * This is a real match, so it cannot
-           * already have a winner.
-           */
           if (
             nextMatch.winnerId !==
             null
@@ -1236,10 +1429,12 @@ function resolveBracket(
         }
 
         /*
-         * Both feeder matches are resolved
-         * but only one player exists:
-         * genuine BYE.
+         * Both feeders are resolved but only
+         * one player exists.
+         *
+         * Automatic BYE.
          */
+
         if (
           hasPlayer1 ||
           hasPlayer2
@@ -1271,12 +1466,26 @@ function resolveBracket(
           continue;
         }
 
+        /*
+         * Nothing available yet.
+         */
+
         if (
           nextMatch.winnerId !==
           null
         ) {
           nextMatch.winnerId =
             null;
+
+          changed = true;
+        }
+
+        if (
+          nextMatch.status !==
+          "ready"
+        ) {
+          nextMatch.status =
+            "ready";
 
           changed = true;
         }
